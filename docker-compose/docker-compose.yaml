@@ -1,0 +1,28 @@
+services:
+  # Run postgres 13 database
+  davinci-pr-postgres:
+    image: postgres:13
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./davinci-pr-postgres-init.sql:/docker-entrypoint-initdb.d
+
+  # Run the service
+  davinci-pr-service:
+    build: ../
+    ports:
+      - 8080:8080
+    environment:
+      - DB_HOST=davinci-pr-postgres
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_ADMIN_USERNAME=postgres
+      - DB_ADMIN_PASSWORD=postgres
+      - LOGICAL_ENV_NAME=local
+      - SERVICE_NAME=postable-remittance

@@ -1,0 +1,4 @@
+logging:
+  # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
+  level:
+    ROOT: INFO

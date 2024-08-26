@@ -1,0 +1,41 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ health, metrics, prometheus, info, env, flyway ]
+
+spring:
+  application:
+    name: ${SERVICE_NAME:postable-remittance}
+  profiles:
+    active: ${LOGICAL_ENV_NAME:local}
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: "jdbc:p6spy:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=postable_remittance"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: true
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: false
+    hibernate:
+      ddl-auto: none
+
+springdoc:
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+
+logging:
+  # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
+  level:
+    ROOT: INFO
+    p6spy: INFO

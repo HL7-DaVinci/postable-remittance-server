@@ -1,0 +1,60 @@
+### Java ###
+.mtj.tmp/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+out/
+.idea_modules/
+.idea/
+.run/
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Visual Studio Code ###
+.vscode/
+.code-workspace
+
+### OS X ###
+.DS_Store
+
+### Terraform ###
+**/pipeline.tf
+**/local.tf
+**/*.tfstate
+**/.terraform*
+
+### Misc. ###
+.env
+logs/

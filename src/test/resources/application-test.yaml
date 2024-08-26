@@ -1,0 +1,28 @@
+spring:
+  exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  sql:
+    init:
+      mode: always
+  #  application:
+#    name: ${SERVICE_NAME:postable-remittance}
+#  profiles:
+#    active: ${LOGICAL_ENV_NAME:local}
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: "jdbc:h2:mem:public"
+    username: sa
+    password: password
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    database: h2
+  flyway:
+    enabled: false
+logging:
+  # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
+  level:
+    ROOT: INFO
+    org.hl7.davinci.pr: INFO
