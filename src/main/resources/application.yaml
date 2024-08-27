@@ -2,6 +2,9 @@ server:
   port: 8080
   servlet:
     context-path: /
+  # This is to avoid issues with CORS when sending requests from Swagger-UI: https://stackoverflow.com/a/60625495
+  # https://springdoc.org/faq.html#how-can-i-deploy-springdoc-openapi-ui-behind-a-reverse-proxy
+  forward-headers-strategy: framework
 
 management:
   endpoints:
@@ -28,6 +31,12 @@ spring:
         generate_statistics: false
     hibernate:
       ddl-auto: none
+  flyway:
+    enabled: true
+    schemas: postable_remittance
+    user: ${DB_ADMIN_USERNAME}
+    password: ${DB_ADMIN_PASSWORD}
+    locations: classpath:db/migration/PostgreSQL
 
 springdoc:
   swagger-ui:
