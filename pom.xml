@@ -41,6 +41,7 @@
     <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
     <commons-lang3.version>3.15.0</commons-lang3.version>
     <itextpdf.version>5.5.13.3</itextpdf.version>
+    <x12-parser.version>1.15</x12-parser.version>
   </properties>
 
   <dependencies>
@@ -138,6 +139,11 @@
       <groupId>com.itextpdf</groupId>
       <artifactId>itextpdf</artifactId>
       <version>${itextpdf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.imsweb</groupId>
+      <artifactId>x12-parser</artifactId>
+      <version>${x12-parser.version}</version>
     </dependency>
   </dependencies>
 

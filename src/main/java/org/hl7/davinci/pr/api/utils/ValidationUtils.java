@@ -1,5 +1,6 @@
 package org.hl7.davinci.pr.api.utils;
 
+import static org.hl7.davinci.pr.api.utils.ApiConstants.REMITTANCE_ADVICE_TYPE_835;
 import static org.hl7.davinci.pr.api.utils.ApiConstants.REMITTANCE_ADVICE_TYPE_PDF;
 
 import java.util.HashMap;
@@ -155,7 +156,7 @@ public class ValidationUtils {
     //if it's empty
     if (!StringUtils.hasText(remittanceAdviceType)) {
       throw new IllegalArgumentException(REMITTANCE_ADVICE_TYPE_REQUIRED_MESSAGE);
-    } else if (!remittanceAdviceType.equalsIgnoreCase(REMITTANCE_ADVICE_TYPE_PDF)) {
+    } else if (!remittanceAdviceType.equalsIgnoreCase(REMITTANCE_ADVICE_TYPE_PDF) && !remittanceAdviceType.equalsIgnoreCase(REMITTANCE_ADVICE_TYPE_835)) {
       throw new IllegalArgumentException(REMITTANCE_ADVICE_TYPE_FORMAT_MESSAGE);
     }
   }

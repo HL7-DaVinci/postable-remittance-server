@@ -61,4 +61,179 @@ public class ApiConstants {
 
   public static final String REMITTANCE_ADVICE_TYPE_PDF = "PDF";
   public static final String REMITTANCE_ADVICE_TYPE_835 = "835";
+
+  // Examples of requests bodies for Swagger-UI
+  public static final String SEARCH_BY_CLAIM_EXAMPLE = """
+      {
+          "resourceType": "Parameters",
+          "parameter": [
+              {
+                  "name": "TIN",
+                  "valueString": "123456789"
+              },
+              {
+                  "name": "DateOfService",
+                  "valuePeriod": {
+                      "start": "2023-08-01",
+                      "end": "2023-08-31"
+                  }
+              },
+              {
+                  "name": "PatientID",
+                  "valueString": "M12345678901"
+              },
+              {
+                  "name": "Claim",
+                  "part": [
+                      {
+                          "name": "ProviderClaimID",
+                          "valueString": "12345V12345"
+                      },
+                      {
+                          "name": "ProviderID",
+                          "valueString": "PB654"
+                      },
+                      {
+                          "name": "PayerClaimID",
+                          "valueString": "4567891236"
+                      },
+                      {
+                          "name": "ClaimChargeAmount",
+                          "valueString": "20.00"
+                      }
+                  ]
+              },
+              {
+                  "name": "PayerID",
+                  "valueString": "12345"
+              },
+              {
+                  "name": "PayerName",
+                  "valueString": "ABCDE"
+              }
+          ]
+      }""";
+
+  public static final String SEARCH_BY_PATIENT_EXAMPLE = """
+      {
+          "resourceType": "Parameters",
+          "parameter": [
+              {
+                  "name": "TIN",
+                  "valueString": "123456789"
+              },
+              {
+                  "name": "DateOfService",
+                  "valuePeriod": {
+                      "start": "2023-08-01",
+                      "end": "2023-08-31"
+                  }
+              },
+              {
+                  "name": "Patient",
+                  "part": [
+                      {
+                          "name": "PatientID",
+                          "valueString": "M12345678901"
+                      },
+                      {
+                          "name": "DateOfBirth",
+                          "valueDate": "2000-11-05"
+                      },
+                      {
+                          "name": "PatientFirstName",
+                          "valueString": "QWERT"
+                      },
+                      {
+                          "name": "PatientLastName",
+                          "valueString": "ZXCVB"
+                      }
+                  ]
+              },
+              {
+                  "name": "PayerID",
+                  "valueString": "12345"
+              },
+              {
+                  "name": "PayerName",
+                  "valueString": "ABCDE"
+              }
+          ]
+      }""";
+
+  public static final String SEARCH_BY_PAYMENT_EXAMPLE = """
+      {
+           "resourceType": "Parameters",
+           "parameter": [
+               {
+                   "name": "TIN",
+                   "valueString": "123456789"
+               },
+               {
+                   "name": "DateOfService",
+                   "valuePeriod": {
+                       "start": "2023-08-01",
+                       "end": "2023-08-31"
+                   }
+               },
+               {
+                   "name": "Payment",
+                   "part": [
+                       {
+                           "name": "PaymentIssueDate",
+                           "valuePeriod": {
+                               "start": "2023-09-01",
+                               "end": "2023-11-30"
+                           }
+                       },
+                       {
+                           "name": "PaymentAmount",
+                           "part": [
+                               {
+                                   "name": "PaymentAmountLow",
+                                   "valueMoney": {
+                                       "value": 10.00,
+                                       "currency": "USD"
+                                   }
+                               },
+                               {
+                                   "name": "PaymentAmountHigh",
+                                   "valueMoney": {
+                                       "value": 150.00,
+                                       "currency": "USD"
+                                   }
+                               }
+                           ]
+                       },
+                       {
+                           "name": "PaymentNumber",
+                           "valueString": "A123456"
+                       }
+                   ]
+               },
+               {
+                   "name": "PayerID",
+                   "valueString": "12345"
+               },
+               {
+                   "name": "PayerName",
+                   "valueString": "ABCDE"
+               }
+           ]
+      }""";
+
+  public static final String DOWNLOAD_REMITTANCE_EXAMPLE = """
+      {
+          "resourceType": "Parameters",
+          "parameter": [
+              {
+                  "name": "RemittanceAdviceIdentifier",
+                  "valueString": "A123456BCD"
+              },
+              {
+                  "name": "RemittanceAdviceType",
+                  "valueCode": "PDF"
+              }
+          ]
+      }""";
 }

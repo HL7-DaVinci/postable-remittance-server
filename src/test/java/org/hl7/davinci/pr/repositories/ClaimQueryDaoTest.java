@@ -1,12 +1,6 @@
 package org.hl7.davinci.pr.repositories;
 
 import jakarta.persistence.Tuple;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.BiFunction;
 import org.hibernate.Hibernate;
 import org.hl7.davinci.pr.BaseTest;
 import org.hl7.davinci.pr.domain.*;

@@ -1,6 +1,12 @@
 package org.hl7.davinci.pr.api.controller;
 
+import static org.hl7.davinci.pr.api.utils.ApiConstants.SEARCH_BY_CLAIM_EXAMPLE;
+import static org.hl7.davinci.pr.api.utils.ApiConstants.SEARCH_BY_PATIENT_EXAMPLE;
+import static org.hl7.davinci.pr.api.utils.ApiConstants.SEARCH_BY_PAYMENT_EXAMPLE;
+
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.davinci.pr.api.utils.ApiConstants;
@@ -17,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,13 +43,6 @@ public class SearchController {
     this.searchService = searchService;
   }
 
-  @Operation(tags = "Test Endpoint")
-  @GetMapping(path = "/hello", produces = MediaType.TEXT_PLAIN_VALUE)
-  public ResponseEntity<String> hello() {
-    log.info("Endpoint /hello is called.");
-    return new ResponseEntity<>("Welcome to Postable Remittance!", HttpStatus.OK);
-  }
-
   /**
    * Search by claim endpoint that validates and processes the search request.
    *
@@ -58,7 +56,8 @@ public class SearchController {
   @PostMapping(
       path = SEARCH_BY_CLAIM_ENDPOINT,
       consumes = {MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<String> searchByClaim(@RequestBody(required = true) HttpEntity<String> httpEntity) {
+  public ResponseEntity<String> searchByClaim(
+      @RequestBody(required = true, content = @Content(schema = @Schema(example = SEARCH_BY_CLAIM_EXAMPLE))) HttpEntity<String> httpEntity) {
 
     String responseBody = "";
     HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
@@ -108,7 +107,8 @@ public class SearchController {
   @PostMapping(
       path = SEARCH_BY_PATIENT_ENDPOINT,
       consumes = {MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<String> searchByPatient(@RequestBody(required = true) HttpEntity<String> httpEntity) {
+  public ResponseEntity<String> searchByPatient(
+      @RequestBody(required = true, content = @Content(schema = @Schema(example = SEARCH_BY_PATIENT_EXAMPLE))) HttpEntity<String> httpEntity) {
 
     String responseBody = "";
     HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
@@ -158,7 +158,8 @@ public class SearchController {
   @PostMapping(
       path = SEARCH_BY_PAYMENT_ENDPOINT,
       consumes = {MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<String> searchByPayment(@RequestBody(required = true) HttpEntity<String> httpEntity) {
+  public ResponseEntity<String> searchByPayment(
+      @RequestBody(required = true, content = @Content(schema = @Schema(example = SEARCH_BY_PAYMENT_EXAMPLE))) HttpEntity<String> httpEntity) {
 
     String responseBody = "";
     HttpStatus httpStatus = HttpStatus.BAD_REQUEST;

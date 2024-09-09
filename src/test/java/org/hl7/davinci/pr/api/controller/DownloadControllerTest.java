@@ -1,59 +1,70 @@
 package org.hl7.davinci.pr.api.controller;
 
-import static org.hl7.davinci.pr.api.controller.DownloadController.DOWNLOAD_REMITTANCE_ENDPOINT;
-
 import org.hl7.davinci.pr.api.utils.FhirUtils;
 import org.hl7.davinci.pr.api.utils.ValidationUtils;
+import org.hl7.davinci.pr.service.DownloadService;
+import org.hl7.davinci.pr.utils.TestDataUtils;
 import org.hl7.davinci.pr.utils.TestUtils;
-import org.hl7.fhir.r4.model.Parameters;
+import org.hl7.fhir.r4.model.DocumentReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.hl7.davinci.pr.api.controller.DownloadController.DOWNLOAD_REMITTANCE_ENDPOINT;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class DownloadControllerTest extends ControllerBaseTest {
+
+    @MockBean
+    DownloadService downloadService;
 
 
     @Test
     void testDownloadRemittance_withAllParams() throws Exception {
-        String downloadRemittanceRequest = TestUtils.getSampleDownloadRemittanceRequestBody("999");
+        String requestBody = TestUtils.getSampleDownloadRemittanceRequestBody(TestDataUtils.REMITTANCE_ADVICEID_1);
+        String response = TestUtils.getSampleDownloadRemittanceResponse();
 
-        Parameters requestParameters = (Parameters) FhirUtils.parseResource(downloadRemittanceRequest);
-        String expectedRequest = FhirUtils.convertToJSON(requestParameters);
+        DocumentReference documentReference = (DocumentReference) FhirUtils.parseResource(response);
+        String docRefStringResponse = FhirUtils.convertToJSON(documentReference);
+        when(downloadService.downloadDocument(TestDataUtils.REMITTANCE_ADVICEID_1, "PDF")).thenReturn(documentReference);
 
-        mockMvc.perform(
+        MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.post(DOWNLOAD_REMITTANCE_ENDPOINT)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(downloadRemittanceRequest))
+                                .content(requestBody))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpectAll(
                         MockMvcResultMatchers.status().isOk(), // Expect HTTP 200 (OK)
-                        MockMvcResultMatchers.content().string(expectedRequest)
-                );
+                        MockMvcResultMatchers.content().string(docRefStringResponse)
+                ).andReturn();
     }
 
     @Test
     void testDownloadRemittance_withRequiredParams() throws Exception {
-        String downloadRemittanceRequest = TestUtils.getSampleDownloadRemittanceRequiredOnly();
+        String requestBody = TestUtils.getSampleDownloadRemittanceRequiredOnly(TestDataUtils.REMITTANCE_ADVICEID_1);
+        String response = TestUtils.getSampleDownloadRemittanceResponse();
 
-        Parameters requestParameters = (Parameters) FhirUtils.parseResource(downloadRemittanceRequest);
-        String expectedRequest = FhirUtils.convertToJSON(requestParameters);
+        DocumentReference documentReference = (DocumentReference) FhirUtils.parseResource(response);
+        String docRefStringResponse = FhirUtils.convertToJSON(documentReference);
+        when(downloadService.downloadDocument(TestDataUtils.REMITTANCE_ADVICEID_1, null)).thenReturn(documentReference);
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.post(DOWNLOAD_REMITTANCE_ENDPOINT)
+        MvcResult result = mockMvc.perform(
+                        MockMvcRequestBuilders.post(DOWNLOAD_REMITTANCE_ENDPOINT)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(downloadRemittanceRequest))
+                                .content(requestBody))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpectAll(
                         MockMvcResultMatchers.status().isOk(), // Expect HTTP 200 (OK)
-                        MockMvcResultMatchers.content().string(expectedRequest)
-                );
+                        MockMvcResultMatchers.content().string(docRefStringResponse)
+                ).andReturn();
     }
 
     @Test
