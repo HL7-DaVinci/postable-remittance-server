@@ -2,18 +2,27 @@ package org.hl7.davinci.pr.utils;
 
 import static org.hl7.davinci.pr.api.utils.ApiConstants.REMITTANCE_ADVICE_TYPE_PDF;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hl7.davinci.pr.domain.*;
-import org.hl7.davinci.pr.repositories.*;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.function.BiFunction;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hl7.davinci.pr.domain.ClaimQuery;
+import org.hl7.davinci.pr.domain.Patient;
+import org.hl7.davinci.pr.domain.Payer;
+import org.hl7.davinci.pr.domain.Payment;
+import org.hl7.davinci.pr.domain.Provider;
+import org.hl7.davinci.pr.domain.Remittance;
+import org.hl7.davinci.pr.repositories.ClaimQueryRepository;
+import org.hl7.davinci.pr.repositories.PatientRepository;
+import org.hl7.davinci.pr.repositories.PayerRepository;
+import org.hl7.davinci.pr.repositories.PaymentRepository;
+import org.hl7.davinci.pr.repositories.ProviderRepository;
+import org.hl7.davinci.pr.repositories.RemittanceRepository;
 
 
 @Slf4j

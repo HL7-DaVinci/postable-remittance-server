@@ -1,9 +1,13 @@
 package org.hl7.davinci.pr.api.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public abstract class DataConstants {
 
     public static final String ZERO_DOLLARS = "$0.00";
-    public static final String FLOAT_STRING_FORMAT = "$%.2f";
+    public static final String FLOAT_STRING_FORMAT_PDF = "$%.2f";
+    public static final String FLOAT_STRING_FORMAT_TXT = "%.2f";
     public static final String PDF_LABEL_CPT = "CPT";
     public static final String PDF_LABEL_UNITS = "Units";
     public static final String PDF_LABEL_BILLED = "Billed";
@@ -47,7 +51,18 @@ public abstract class DataConstants {
     public static final String PDF_LABEL_PATIENT_ACCOUNT = "Patient Account #: ";
     public static final String PDF_LABEL_PAYER_CLAIM = "Payer Claim #: ";
     public static final String PDF_LABEL_PAY_DATE = "Pay Date: ";
-    public static final String FAKE_PAYER_ADDRESS = "PO BOX 1106 \n LEWISTON ID, 83501";
-    public static final String FAKE_PROVIDER_NAME = "Local clinic - (%s)";
+    public static final String FAKE_PAYER_ADDRESS = "PO BOX 1106 \n LEXINGTON KY, 405120000";
+    public static final String FAKE_PAYER_ADDRESS_POBOX = "PO BOX 1106";
+    public static final String FAKE_PAYER_ADDRESS_CITY = "LEXINGTON";
+    public static final String FAKE_PAYER_ADDRESS_STATE = "KY";
+    public static final String FAKE_PAYER_ADDRESS_ZIPCODE = "405120000";
+    public static final String FAKE_PROVIDER_NAME_WITH_NPI = "Local clinic - (%s)";
+    public static final String FAKE_PROVIDER_NAME = "Local clinic LLC";
     public static final String FAKE_PROVIDER_ADDRESS = "PO BOX 15262\nBELFAST ME, 049154047";
-}
+    public static final String FAKE_PROVIDER_ADDRESS_POBOX = "PO BOX 18001";
+    public static final String FAKE_PROVIDER_ADDRESS_CITY = "BELFAST";
+    public static final String FAKE_PROVIDER_ADDRESS_STATE = "ME";
+    public static final String FAKE_PROVIDER_ADDRESS_ZIPCODE = "049150000";
+
+    public final static SimpleDateFormat dateFormatter835 = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+ }

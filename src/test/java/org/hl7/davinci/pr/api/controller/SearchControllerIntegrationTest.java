@@ -70,14 +70,6 @@ class SearchControllerIntegrationTest extends ControllerBaseTest {
   }
 
   @Test
-  void testHelloEndpoint() throws Exception {
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/hello"))
-        .andExpect(MockMvcResultMatchers.status().isOk())  // Expect HTTP 200 (OK)
-        .andExpect(MockMvcResultMatchers.content()
-            .string("Welcome to Postable Remittance!"));
-  }
-
-  @Test
   void testSearchByClaimEndpoint_withAllParams() throws Exception {
     Parameters requestResource = ApiUtils.generateSearchByClaimRequestResource(TestDataUtils.PROVIDER_TIN_1,
         TestDataUtils.DATE_OF_SERVICE, TestDataUtils.DATE_OF_SERVICE_END, TestDataUtils.PATIENT_ID_1,

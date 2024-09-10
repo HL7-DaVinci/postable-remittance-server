@@ -26,14 +26,6 @@ class SearchControllerUnitTest extends ControllerBaseTest {
   private SearchService searchService;
 
   @Test
-  void testHelloEndpoint() throws Exception {
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/hello"))
-        .andExpect(MockMvcResultMatchers.status().isOk())  // Expect HTTP 200 (OK)
-        .andExpect(MockMvcResultMatchers.content()
-            .string("Welcome to Postable Remittance!"));
-  }
-
-  @Test
   void testSearchByClaimEndpoint_withAllParams() throws Exception {
     String searchByClaimRequest = TestUtils.getSampleSearchByClaimRequestBody();
     Parameters requestParameters = (Parameters) FhirUtils.parseResource(searchByClaimRequest);

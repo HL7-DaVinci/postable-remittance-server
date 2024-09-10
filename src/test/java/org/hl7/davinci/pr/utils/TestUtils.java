@@ -68,7 +68,7 @@ public class TestUtils {
                      },
                      {
                        "name" : "RemittanceAdviceType",
-        "valueCode" : "PDF"
+                        "valueCode" : "PDF"
                      }
                    ]
                  }""", remittanceAdviceId);
@@ -93,8 +93,27 @@ public class TestUtils {
                  }""";
   }
 
-  public String getSampleDownloadRemittanceRequiredOnly() {
+  public String getSampleDownloadRemittanceResponse() {
     return """
+            {
+                   "resourceType": "DocumentReference",
+                   "id": "remittance-document-b6445654-586d-42de-98f7-a0e82a070896",
+                   "meta": {
+                     "profile": [ "http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument" ]
+                   },
+                   "status": "current",
+                   "content": [ {
+                     "attachment": {
+                       "contentType": "application/zip",
+                       "data": "sample"
+                     }
+                   } ]
+                 }
+                """;
+  }
+
+  public String getSampleDownloadRemittanceRequiredOnly(String remittanceAdviceId) {
+    return String.format("""
               {
                    "resourceType" : "Parameters",
                    "id" : "ExampleDownloadRemittance",
@@ -106,10 +125,10 @@ public class TestUtils {
                    "parameter" : [
                      {
                        "name" : "RemittanceAdviceIdentifier",
-                       "valueString" : "99999"
+                       "valueString" : "%s"
                      }
                    ]
-                 }""";
+                 }""", remittanceAdviceId);
   }
 
   public String getSampleSearchByClaimRequestBody() {
