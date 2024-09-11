@@ -1,9 +1,19 @@
 package org.hl7.davinci.pr.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Provider class reprsents practice or provider.
@@ -34,12 +44,6 @@ public class Provider extends AuditableEntity {
      * */
     @Column(name="provider_npi")
     private String providerNPI;
-
-    /**
-     * Provider's NPI that's coming from payer
-     * */
-    @Column(name="payer_provider_npi")
-    private String payerProviderNPI;
 
     @OneToMany(mappedBy = "provider")
     @ToString.Exclude

@@ -132,7 +132,6 @@ Create docker containers for postgresql and microservice using docker-compose
 erDiagram
   provider {
     integer id PK
-    string payer_provider_npi
     string provider_npi
     string tin
   }
@@ -166,7 +165,6 @@ erDiagram
     timestamp received_dt
     string dcn_icn
     string payer_claimid
-    string payer_provider_npi
     string provider_claimid
     string provider_npi
     string provider_tin

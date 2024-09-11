@@ -38,7 +38,6 @@ public class TestDataUtils {
     public static final String PROVIDER_NPI_1 = "provider_npi_1";
     public static final String PATIENT_FIRST_NAME_1 = "PatientName1";
     public static final String PATIENT_LAST_NAME_1 = "PatientLastName1";
-    public static final String PAYER_PROVIDER_NPI_1 = "payer_provider_npi_1";
     public static final String REMITTANCE_ADVICEID_1 = "rem_adviceid_1";
     public static final String DATE_OF_SERVICE = "2024-05-05";
     public static final String DATE_OF_SERVICE_END = "2024-05-06";
@@ -84,7 +83,7 @@ public class TestDataUtils {
 
         Provider provider;
         if (hasProvider) {
-            provider = Provider.builder().id(1).payerProviderNPI(PAYER_PROVIDER_NPI_1).providerNPI(PROVIDER_NPI_1).tin(PROVIDER_TIN_1).build();
+            provider = Provider.builder().id(1).providerNPI(PROVIDER_NPI_1).tin(PROVIDER_TIN_1).build();
             providerRepo.save(provider);
         } else {
             provider = null;
@@ -127,7 +126,7 @@ public class TestDataUtils {
         clb = hasReceivedDateBuilder.apply(hasDates, clb);
 
         //populate claim query direct fields
-        ClaimQuery claimQuery = clb.payerClaimId(PAYER_CLAIM_ID_1).payerProviderNPI(PAYER_PROVIDER_NPI_1).
+        ClaimQuery claimQuery = clb.payerClaimId(PAYER_CLAIM_ID_1).
                 providerClaimID(PROVIDER_CLAIMID_1).providerNPI(PROVIDER_NPI_1).providerTin(PROVIDER_TIN_1).
                 subscriberPatientId(PATIENT_ID_1).claimChargeAmount(CLAIM_CHARGE_AMOUNT).
                 dateOfService(dateOfService).build();
