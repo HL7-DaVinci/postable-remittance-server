@@ -21,12 +21,14 @@ the [Postable Remittance Implementation Guide (IG)](https://build.fhir.org/ig/HL
     - [Use IntelliJ IDE to debug and test the microservice](#use-intellij-ide-to-debug-and-test-the-microservice)
     - [Access the service](#access-the-service)
     - [Health and Swagger UI Routes](#health-and-swagger-ui-routes)
+  - [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
   - [Service Endpoints](#service-endpoints)
     - [Endpoints `/$searchByClaim` and `/$searchByPatient`](#endpoints-searchbyclaim-and-searchbypatient)
     - [Endpoint `/$searchByPayment`](#endpoint-searchbypayment)
     - [Endpoint `/$downloadRemittance`](#endpoint-downloadremittance)
     - [Decode and open the remittance document](#decode-and-open-the-remittance-document)
     - [Sample response for no results found or any errors](#sample-response-for-no-results-found-or-any-errors)
+  - [Testing from the Swagger-UI](#testing-from-the-swagger-ui)
   - [Scenarios For Testing](#scenarios-for-testing)
     - [Scenario 1: Return a single result](#scenario-1-return-a-single-result)
     - [Scenario 2: Return results with multiple claims/payments/remittances](#scenario-2-return-results-with-multiple-claimspaymentsremittances)
@@ -62,7 +64,8 @@ SERVICE_NAME=postable-remittance
 
 ### Sample data
 
-Add data to postgres using example queries in [test-data.xlsx](test-data/test-data.xlsx)
+- Run service to generate `postable_remittance` schema along with tables in the postgres database
+- Add data to the tables using insert queries from [test-data.xlsx](test-data/test-data.xlsx)
 
 ### Postman collection
 
@@ -120,19 +123,99 @@ Create docker containers for postgresql and microservice using docker-compose
 - To access the Swagger JSON: `/v3/api-docs`
 - To access the Swagger YAML: `/v3/api-docs.yaml`
 
+## Entity Relationship Diagram (ERD)
+
+```mermaid
+%% Courtesy of Mermaid.js 
+%% Syntax: https://mermaid.js.org/syntax/entityRelationshipDiagram.html
+
+erDiagram
+  provider {
+    integer id PK
+    string provider_npi
+    string tin
+  }
+
+  patient {
+    integer id PK
+    timestamp date_of_birth
+    string first_name
+    string last_name
+  }
+
+  payer {
+    integer id PK
+    string payer_name
+    string payer_identity
+  }
+
+  subscriber_patient {
+    integer id PK
+    integer patient_id FK
+    integer payer_id FK
+    string subscriber_patient_id
+  }
+
+  claim_query {
+    integer id PK
+    integer patient_id FK
+    integer payer_id FK
+    integer provider_id FK
+    timestamp dos_dt
+    timestamp received_dt
+    string dcn_icn
+    string payer_claimid
+    string provider_claimid
+    string provider_npi
+    string provider_tin
+    string subscriber_patient_id
+    numeric claim_charge_amt
+  }
+
+  payment {
+    integer id PK
+    integer claim_id FK
+    numeric amount
+    timestamp payment_issue_dt
+    string payment_number
+  }
+
+  remittance {
+    integer id PK
+    integer claim_id FK
+    integer remittance_advice_file_size
+    timestamp remittance_advice_dt
+    string remittance_advice_type
+    string remittance_adviceid
+  }
+
+%% Relationships
+  claim_query }o--|| payer: "payer_id"
+  claim_query }o--|| patient: "patient_id"
+  claim_query }o--|| provider: "provider_id"
+  payment }o--|| claim_query: "claim_id"
+  remittance }o--|| claim_query: "claim_id"
+  subscriber_patient }o--|| payer: "payer_id"
+  subscriber_patient }o--|| patient: "patient_id"
+
+```
+
 ## Service Endpoints
 
-The service endpoints are documented as [Artifact Summary](https://build.fhir.org/ig/HL7/davinci-pr/artifacts.html) in
-the IG. The input cardinality of individual endpoint is mentioned in respective input parameters links in the following
-table. Service will respond with 200 (Ok) for results found, 404 (Not Found) for no results found, 400 (Bad Request) for
+- The service endpoints are documented as [Artifact Summary](https://build.fhir.org/ig/HL7/davinci-pr/artifacts.html) in
+  the IG.
+- The input cardinality of individual endpoint is mentioned in respective input parameters links in the following
+  table.
+- Service will respond with 200 (Ok) for results found, 404 (Not Found) for no results found, 400 (Bad Request) for
 any other errors.
+- RemittanceAdviceFileSize in Remittance Parameters is in Bytes.
 
-| Service                | Methods | Description                                                                                                                                                                                                                                                                           |
-|------------------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `/$searchByClaim`      | `POST`  | This endpoint returns [search results](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchResultParameters.html) based on input [claim parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByClaimParameters.html)                         |
-| `/$searchByPatient`    | `POST`  | This endpoint returns [search results](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchResultParameters.html) based on input [patient parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByPatientParameters.html)                     |
-| `/$searchByPayment`    | `POST`  | This endpoint returns [search results](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByPaymentResultParameters.html) based on input [payment parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByPaymentParameters.html)            |
-| `/$downloadRemittance` | `POST`  | This endpoint returns [zipped remittance document](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-remittanceAdviceDocument.html) based on input [remittance parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-downloadRemittanceParameters.html) |
+| Service                | Methods | Required Parameters                      | Description                                                                                                                                                                                                                                                                           |
+|------------------------|---------|------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/$searchByClaim`      | `POST`  | TIN and ProviderClaimID (PAN)            | This endpoint returns [search results](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchResultParameters.html) based on input [claim parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByClaimParameters.html)                         |
+| `/$searchByPatient`    | `POST`  | TIN, PatientID, and DateOfBirth          | This endpoint returns [search results](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchResultParameters.html) based on input [patient parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByPatientParameters.html)                     |
+| `/$searchByPayment`    | `POST`  | TIN, PaymentNumber, and PaymentIssueDate | This endpoint returns [search results](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByPaymentResultParameters.html) based on input [payment parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-searchByPaymentParameters.html)            |
+| `/$downloadRemittance` | `POST`  | RemittanceAdviceIdentifier               | This endpoint returns [zipped remittance document](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-remittanceAdviceDocument.html) based on input [remittance parameters](https://build.fhir.org/ig/HL7/davinci-pr/StructureDefinition-downloadRemittanceParameters.html) |
 
 ### Endpoints `/$searchByClaim` and `/$searchByPatient`
 
@@ -367,7 +450,7 @@ curl --location 'http://localhost:8080/$searchByPatient' \
         },
         {
           "name": "PatientID",
-          "valueString": "2"
+          "valueString": "M12345678901"
         },
         {
           "name": "PatientFirstName",
@@ -654,6 +737,17 @@ curl --location 'http://localhost:8080/$downloadRemittance' \
 
 </details>
 
+## Testing from the Swagger-UI
+
+- After the service is up and running, access the Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- Expand the operations section and click on "Try it out" button to test the service.
+- Modify request body with one of the requests mentioned in the [Scenarios For Testing](#scenarios-for-testing).
+- Observe the responses as expected per the scenario.
+- <details>
+    <summary>Demo of Swagger UI. Click to expand.</summary>
+    <img src="test-data/swagger-ui-short-demo.gif" alt="Your browser does not support the img tag."/>
+  </details>
+
 ## Scenarios For Testing
 
 Following scenarios can be used for testing the service. These are based on the [test data](#sample-data) mentioned
@@ -889,7 +983,7 @@ curl --location 'http://localhost:8080/$downloadRemittance' \
 ### Scenario 2: Return results with multiple claims/payments/remittances
 
 <details>
-<summary>Search by Claim: Result with multiple claims/payments/remittances when requested with TIN and ProviderClaimID (PAN). Click to expand.</summary>
+<summary>Search by Claim: Result with multiple claims/payments/remittances when requested with TIN and ProviderClaimID (PAN). Note that the PayerClaimID will not be provided in this case, else it will hard match on that value. Click to expand.</summary>
 
 ```shell
 curl --location 'http://localhost:8080/$searchByClaim' \

@@ -401,6 +401,7 @@ public class TestUtils {
           .receivedDate(TestDataUtils.dateFormatter.parse(TestDataUtils.DATE_OF_SERVICE))
           .providerNPI(TestDataUtils.PROVIDER_NPI_1)
           .payerClaimId(TestDataUtils.PAYER_CLAIM_ID_1)
+          .subscriberPatientId(TestDataUtils.PATIENT_ID_1)
           .build();
     } catch (ParseException e) {
       throw new RuntimeException(e);

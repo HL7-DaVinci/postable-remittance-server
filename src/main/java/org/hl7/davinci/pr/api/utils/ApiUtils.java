@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
 import lombok.experimental.UtilityClass;
 import org.hl7.davinci.pr.domain.ClaimQuery;
 import org.hl7.davinci.pr.domain.Patient;
@@ -207,6 +206,7 @@ public class ApiUtils {
     Iterator<ClaimQuery> claimQueryIterator = claimQueries.iterator();
     Iterator<Payment> paymentIterator = payments.iterator();
     Payment payment = null;
+    String subscriberPatientId = null;
     while (claimQueryIterator.hasNext()) {
       ClaimQuery claimQuery = claimQueryIterator.next();
 
@@ -226,6 +226,8 @@ public class ApiUtils {
           .setValue(new StringType(claimQuery.getProviderNPI()));
       claimComponent.addPart().setName(ApiConstants.PAYER_CLAIM_ID)
           .setValue(new StringType(claimQuery.getPayerClaimId()));
+
+      subscriberPatientId = claimQuery.getSubscriberPatientId();
 
       // Payment
       ParametersParameterComponent paymentComponent = new ParametersParameterComponent();
@@ -250,8 +252,11 @@ public class ApiUtils {
       patientComponent.setName(ApiConstants.PATIENT);
       patientComponent.addPart().setName(ApiConstants.DATE_OF_BIRTH)
           .setValue(FhirUtils.generateDateType(patient.getDateOfBirth()));
+
+      // Patient id is the subscriber_patient_id associated with claim_query
       patientComponent.addPart().setName(ApiConstants.PATIENT_ID)
-          .setValue(new StringType(patient.getId().toString()));
+          .setValue(new StringType(subscriberPatientId));
+
       patientComponent.addPart().setName(ApiConstants.PATIENT_FIRST_NAME)
           .setValue(new StringType(patient.getFirstName()));
       patientComponent.addPart().setName(ApiConstants.PATIENT_LAST_NAME)
