@@ -6,8 +6,8 @@ import com.imsweb.x12.Segment;
 import com.imsweb.x12.Separators;
 import com.imsweb.x12.reader.X12Reader;
 import com.imsweb.x12.writer.X12Writer;
-import com.itextpdf.text.*;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -18,8 +18,8 @@ import org.hl7.davinci.pr.api.utils.ApiConstants;
 import org.hl7.davinci.pr.api.utils.ApiUtils;
 import org.hl7.davinci.pr.api.utils.DataConstants;
 import org.hl7.davinci.pr.api.utils.FhirUtils;
-import org.hl7.davinci.pr.domain.*;
 import org.hl7.davinci.pr.domain.Patient;
+import org.hl7.davinci.pr.domain.*;
 import org.hl7.davinci.pr.repositories.ClaimQueryDao;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -48,14 +48,16 @@ public class DownloadService {
         if (searchResults == null || searchResults.size() == 0) {
             return null;
         }
+        remittanceType = (remittanceType == null)? ApiConstants.REMITTANCE_ADVICE_TYPE_PDF:remittanceType;
         DocumentReference documentReference = new DocumentReference();
         documentReference.setId("remittance-document-" + FhirUtils.generateUniqueResourceID());
         documentReference.setMeta(FhirUtils.generateResourceMeta("http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument"));
         documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
+        documentReference.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
+        documentReference.getText().setDivAsString(String.format("<div>RemittanceAdviceType:%s</div>", remittanceType));
 
-
-        /*the order of tuples is:
-          {@link ClaimQuery}, {@link org.hl7.davinci.pr.domain.Patient}, {@link org.hl7.davinci.pr.domain.Payer}, {@link Payment}, {@link org.hl7.davinci.pr.domain.Remittance}*/
+        //the order of tuples is:
+        //  {@link ClaimQuery}, {@link org.hl7.davinci.pr.domain.Patient}, {@link org.hl7.davinci.pr.domain.Payer}, {@link Payment}, {@link org.hl7.davinci.pr.domain.Remittance}
         Tuple firstTuple = searchResults.get(0);
         ClaimQuery claimQueryFirst = firstTuple.get(0, ClaimQuery.class);
         Payer payerFirst = firstTuple.get(2, Payer.class);
@@ -63,7 +65,7 @@ public class DownloadService {
 
         //build pdf by default
         ByteArrayOutputStream baos = null;
-        if (remittanceType == null || remittanceType.equals(ApiConstants.REMITTANCE_ADVICE_TYPE_PDF)) {
+        if (remittanceType.equals(ApiConstants.REMITTANCE_ADVICE_TYPE_PDF)) {
             baos = buildPdf(payerFirst, claimQueryFirst, paymentFirst, searchResults);
         } else {
             String writerResult = build835Text(paymentFirst, payerFirst, claimQueryFirst, searchResults);

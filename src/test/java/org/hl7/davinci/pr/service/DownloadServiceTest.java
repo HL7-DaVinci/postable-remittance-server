@@ -64,6 +64,7 @@ public class DownloadServiceTest extends BaseTest {
            Attachment attachment = docReference.getContent().get(0).getAttachment();
            Assertions.assertEquals("application/zip", attachment.getContentType());
            Assertions.assertTrue(attachment.getDataElement() != null);
+           Assertions.assertTrue(docReference.getText().getDivAsString().contains(ApiConstants.REMITTANCE_ADVICE_TYPE_PDF));
            // log.debug("DocumentReference: \n" + FhirUtils.convertToJSON(docReference));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -81,7 +82,8 @@ public class DownloadServiceTest extends BaseTest {
             Attachment attachment = docReference.getContent().get(0).getAttachment();
             Assertions.assertEquals("application/zip", attachment.getContentType());
             Assertions.assertNotNull(attachment.getDataElement());
-          //  log.debug("DocumentReference: \n" + FhirUtils.convertToJSON(docReference));
+            Assertions.assertTrue(docReference.getText().getDivAsString().contains(ApiConstants.REMITTANCE_ADVICE_TYPE_835));
+           // log.debug("DocumentReference: \n" + FhirUtils.convertToJSON(docReference));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
