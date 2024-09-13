@@ -683,7 +683,8 @@ curl --location 'http://localhost:8080/$downloadRemittance' \
 </details>
 
 <details>
-<summary>Sample response with default advice type as PDF. Click to expand.</summary>
+<summary>Sample response with default advice type as PDF. Click to expand. Note that we are adding optional `text` element with the type 
+of the document inside compressed attachment, in this case its value is `RemittanceAdviceType:PDF`.</summary>
 
 ```json
 {
@@ -693,6 +694,10 @@ curl --location 'http://localhost:8080/$downloadRemittance' \
     "profile": [
       "http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument"
     ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">RemittanceAdviceType:PDF</div>"
   },
   "status": "current",
   "content": [
