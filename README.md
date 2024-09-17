@@ -14,11 +14,13 @@ the [Postable Remittance Implementation Guide (IG)](https://build.fhir.org/ig/HL
     - [Sample data](#sample-data)
     - [Postman collection](#postman-collection)
   - [Getting Started](#getting-started)
-    - [Run the service from the command line](#run-the-service-from-the-command-line)
-    - [Run the service using docker-compose](#run-the-service-using-docker-compose)
+    - [Running with Foundry docker-compose image](#running-with-foundry-docker-compose-image)
+    - [Running local build](#running-local-build)
+      - [Run the service using docker-compose](#run-the-service-using-docker-compose)
       - [Other handy commands](#other-handy-commands)
       - [To delete and recreate the database (and wipe all data)](#to-delete-and-recreate-the-database-and-wipe-all-data)
-    - [Use IntelliJ IDE to debug and test the microservice](#use-intellij-ide-to-debug-and-test-the-microservice)
+      - [Run the service from the command line](#run-the-service-from-the-command-line)
+      - [Use IntelliJ IDE to debug and test the microservice](#use-intellij-ide-to-debug-and-test-the-microservice)
     - [Access the service](#access-the-service)
     - [Health and Swagger UI Routes](#health-and-swagger-ui-routes)
   - [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
@@ -40,7 +42,7 @@ the [Postable Remittance Implementation Guide (IG)](https://build.fhir.org/ig/HL
 
 - Java version: 17
 - Maven version: 3.9.7 (3.6.3+)
-- Postgres version: 13
+- Postgres version: 16
 - Docker/Docker Desktop (optional but helpful)
 
 ### Create environment file
@@ -66,6 +68,9 @@ SERVICE_NAME=postable-remittance
 
 - Run service to generate `postable_remittance` schema along with tables in the postgres database
 - Add data to the tables using insert queries from [test-data.xlsx](test-data/test-data.xlsx)
+- Same queries are included in [initial-data.sql](src/main/resources/db/seeds/initial-data.sql) to populate sample data
+  upon service startup
+- If required, add new sql files under `src/main/resources/db/seeds/` directory with additional queries
 
 ### Postman collection
 
@@ -74,16 +79,48 @@ data [postman_collection.json](test-data/HL7-Postable-Remit.postman_collection.j
 
 ## Getting Started
 
-### Run the service from the command line
+### Running with Foundry docker-compose image
 
-To boot the service locally, use the helper script which loads the environmental variables from your `.env` file.
+- Login to [Foundry](https://foundry.hl7.org) and go to [Account](https://foundry.hl7.org/account)
+- Register a "Runtime Platform Environments" with name `postable-remittance`
+- Go to [Catalog](https://foundry.hl7.org/) and
+  select [Postable Remittance Server](https://foundry.hl7.org/products/db125eeb-eeae-4467-9012-cbce6b13c045)
+- Click on "Configuration Wizard" and "Add Configuration to Platform"
+- Close the dialog box and go to [My Environments](https://foundry.hl7.org/environments) and select both PostgresSQL
+  Server and Postable Remittance Server
+- Click on "Docker Stack" and Foundry will generate a docker-compose.yml file that will be downloaded to your local
+  machine with name `docker-compose.yml`
 
-- Start the service `sh ./run.sh`
-    - Note you may need to run `chmod 777 run.sh` to make the scripts executable.
-- Stop the service with `^c`
+- If you want to connect locally running DB client to the database, then add the port mapping to postgresql-server
+  section in downloaded docker-compose.yml file as follows:
+  - ```yaml
+      postgresql-server:
+        ports:
+          - 5432:5432
+    ```
 
-### Run the service using docker-compose
+- Go to Downloads directory and run docker-compose.yml with command (`--pull always` will pull the latest image)
+  `docker-compose -f docker-compose.yml up -d --pull always`
 
+
+- If port 5432 is exposed, then you can connect using DB client running locally.
+- OR connect to postgresql shell using docker network interface as follows:
+  - Since you register a new "Runtime Platform Environment" with name `postable-remittance`, your network interface name
+    would be `postable-remittance_network`
+  - Run `docker run -it --network postable-remittance_network --rm postgres psql -h postgresql-server -U postgres`
+  - Input password mentioned in `docker-compose.yml` file to connect psql shell
+  - List out schemas using `\dn` and Select `postgres` database using `\c postgres`
+  - List out all tables using `\dt+ postable_remittance.*`
+  - Observe any table using describe `\d postable_remittance.claim_query`
+  - Fetch some data from table using `SELECT * FROM postable_remittance.claim_query LIMIT 10`
+- Once done working with the service, stop both containers using `docker-compose -f docker-compose.yml down`
+
+_Note: A sample Foundry file can be found
+here [docker-compose/foundry/docker-compose.yml](docker-compose/foundry/docker-compose.yml)_
+
+### Running local build
+
+#### Run the service using docker-compose
 Create docker containers for postgresql and microservice using docker-compose
 
 - Navigate to the `docker-compose` directory
@@ -107,7 +144,15 @@ Create docker containers for postgresql and microservice using docker-compose
 - `sh ./down.sh` to delete both service and database containers
 - `sh ./up.sh` to create both service and database containers
 
-### Use IntelliJ IDE to debug and test the microservice
+#### Run the service from the command line
+
+To boot the service locally, use the helper script which loads the environmental variables from your `.env` file.
+
+- Start the service `sh ./run.sh`
+  - Note you may need to run `chmod 777 run.sh` to make the scripts executable.
+- Stop the service with `^c`
+
+#### Use IntelliJ IDE to debug and test the microservice
 
 - Run microservice in debug mode with breakpoints if required.
 
