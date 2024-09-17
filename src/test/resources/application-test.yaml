@@ -2,7 +2,8 @@ spring:
   exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   sql:
     init:
-      mode: always
+      mode: never
+     # data-locations: classpath*:test-db/seeds/empty.sql
   datasource:
     driver-class-name: org.h2.Driver
     url: "jdbc:h2:mem:public"

@@ -1,0 +1,53 @@
+services:
+  pr-server:
+    image: docker.io/hlseven/davinci-postable-remittance-server:latest
+    environment:
+      - DB_NAME=postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+      - DB_ADMIN_USERNAME=postgres
+      - DB_HOST=postgresql-server
+      - LOGICAL_ENV_NAME=local
+      - SERVICE_NAME=postable-remittance
+      - DB_ADMIN_PASSWORD=password
+      - DB_PORT=5432
+    ports:
+      - 8080:8080
+    volumes: [ ]
+    deploy:
+      replicas: 1
+      resources:
+        limits: { }
+        reservations:
+          memory: 1500M
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - postable-remittance_network
+  postgresql-server:
+    image: docker.io/postgres:16
+    environment:
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+    volumes: [ ]
+    deploy:
+      replicas: 1
+      resources:
+        limits: { }
+        reservations:
+          memory: 32M
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - postable-remittance_network
+networks:
+  postable-remittance_network:
+    name: postable-remittance_network
+volumes: { }

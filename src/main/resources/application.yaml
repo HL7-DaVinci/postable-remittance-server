@@ -30,14 +30,19 @@ spring:
         format_sql: true
         generate_statistics: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
   flyway:
     enabled: true
     schemas: postable_remittance
     user: ${DB_ADMIN_USERNAME}
     password: ${DB_ADMIN_PASSWORD}
     locations: classpath:db/migration/PostgreSQL
-
+  sql:
+    init:
+      mode: always
+      data-locations: classpath*:db/seeds/initial-data.sql
+      #add more files to classpath if you want them loaded:
+      #data-locations: classpath*:db/seeds/initial-data.sql, db/seeds/more-data.sql
 springdoc:
   swagger-ui:
     operations-sorter: alpha
