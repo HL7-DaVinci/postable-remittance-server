@@ -223,6 +223,7 @@ erDiagram
     numeric amount
     timestamp payment_issue_dt
     string payment_number
+    integer remittance_id FK
   }
 
   remittance {
@@ -239,6 +240,7 @@ erDiagram
   claim_query }o--|| patient: "patient_id"
   claim_query }o--|| provider: "provider_id"
   payment }o--|| claim_query: "claim_id"
+  payment }o--|| remittance: "remittance_id"
   remittance }o--|| claim_query: "claim_id"
   subscriber_patient }o--|| payer: "payer_id"
   subscriber_patient }o--|| patient: "patient_id"
