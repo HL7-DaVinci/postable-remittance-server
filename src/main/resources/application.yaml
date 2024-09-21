@@ -40,7 +40,7 @@ spring:
   sql:
     init:
       mode: always
-      data-locations: classpath*:db/seeds/*.sql
+      data-locations: classpath*:db/seeds/initial-data.sql,classpath*:db/seeds/update-payment.sql
       #add more files to classpath if you want them loaded:
       #data-locations: classpath*:db/seeds/initial-data.sql, db/seeds/more-data.sql
 springdoc:

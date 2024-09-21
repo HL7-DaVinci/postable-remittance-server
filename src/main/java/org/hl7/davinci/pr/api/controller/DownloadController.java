@@ -12,6 +12,7 @@ import org.hl7.davinci.pr.api.utils.ApiConstants;
 import org.hl7.davinci.pr.api.utils.FhirUtils;
 import org.hl7.davinci.pr.api.utils.ValidationUtils;
 import org.hl7.davinci.pr.service.DownloadService;
+import org.hl7.fhir.r4.model.Binary;
 import org.hl7.fhir.r4.model.DocumentReference;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.hl7.fhir.r4.model.OperationOutcome.IssueSeverity;
@@ -66,15 +67,15 @@ public class DownloadController {
       //optional, so either null or should have a value and it should be validated by now
       String remittanceAdviceType = (requestResource.hasParameter(ApiConstants.REMITTANCE_ADVICE_TYPE))?requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_TYPE).getValue().toString():null;
 
-      DocumentReference documentReference = downloadService.downloadDocument(remittanceAdviceId, remittanceAdviceType);
+      Binary binaryResource = downloadService.downloadDocument(remittanceAdviceId, remittanceAdviceType);
       //no remittance advice has been found
-      if(documentReference == null) {
+      if(binaryResource == null) {
         responseBody = FhirUtils.convertToJSON(
                 FhirUtils.generateErrorOutcome(IssueSeverity.ERROR, IssueType.INVALID,
                         String.format(RESULTS_NOT_FOUND_MESSAGE, DOWNLOAD_REMITTANCE_ENDPOINT)));
         httpStatus = HttpStatus.NOT_FOUND;
       } else {
-        responseBody = FhirUtils.convertToJSON(documentReference);
+        responseBody = FhirUtils.convertToJSON(binaryResource);
         httpStatus = HttpStatus.OK;
       }
 

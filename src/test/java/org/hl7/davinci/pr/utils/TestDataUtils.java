@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.function.BiFunction;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -67,10 +68,9 @@ public class TestDataUtils {
     private RemittanceRepository remittanceRepo;
 
 
-
     public void allDataPopulated(boolean hasPatient, boolean hasProvider, boolean hasPayerName,
-                          boolean hasPayerIdentity, boolean hasPayment, boolean hasRemittance,
-                          boolean hasDates) throws ParseException {
+                                 boolean hasPayerIdentity, boolean hasPayment,
+                                 boolean hasDates) throws ParseException {
         //create data
         Patient patient;
         Date dob = dateFormatter.parse(PATIENT_DOB);
@@ -93,10 +93,10 @@ public class TestDataUtils {
         Payer.PayerBuilder pb = Payer.builder();
         if (hasPayerName || hasPayerIdentity) {
             pb = pb.id(1);
-            if(hasPayerName) {
+            if (hasPayerName) {
                 pb = pb.payerName(PAYER_NAME_1);
             }
-            if(hasPayerIdentity) {
+            if (hasPayerIdentity) {
                 pb = pb.payerIdentity(PAYER_ID_VAL_1);
             }
             payer = pb.build();
@@ -111,12 +111,12 @@ public class TestDataUtils {
         BiFunction<Boolean, ClaimQuery.ClaimQueryBuilder, ClaimQuery.ClaimQueryBuilder> hasProviderBuilder =
                 (hasProvVal, clbInternal) -> hasProvider ? clbInternal.provider(provider) : clbInternal;
         BiFunction<Boolean, ClaimQuery.ClaimQueryBuilder, ClaimQuery.ClaimQueryBuilder> hasPayerBuilder =
-                (hasPayerVal, clbInternal) ->  hasPayerVal ? clbInternal.payer(payer) : clbInternal;
+                (hasPayerVal, clbInternal) -> hasPayerVal ? clbInternal.payer(payer) : clbInternal;
         Date dateOfService = dateFormatter.parse(DATE_OF_SERVICE);
         BiFunction<Boolean, ClaimQuery.ClaimQueryBuilder, ClaimQuery.ClaimQueryBuilder> hasDateBuilder = (hasDatesVal, clbInternal) -> hasDatesVal ?
                 clbInternal.dateOfService(dateOfService) : clbInternal;
         BiFunction<Boolean, ClaimQuery.ClaimQueryBuilder, ClaimQuery.ClaimQueryBuilder> hasReceivedDateBuilder = (hasDatesVal, clbInternal) ->
-            hasDatesVal ? clbInternal.receivedDate(dateOfService) : clbInternal;
+                hasDatesVal ? clbInternal.receivedDate(dateOfService) : clbInternal;
 
         ClaimQuery.ClaimQueryBuilder clb = ClaimQuery.builder().id(1);
         clb = hasPatientBuilder.apply(hasPatient, clb);
@@ -132,18 +132,8 @@ public class TestDataUtils {
                 dateOfService(dateOfService).build();
         claimQueryRepo.save(claimQuery);
 
-        //populate Payment and Remittance that refer to the claimQuery
-        Date paymentIssueDt = dateFormatter.parse(PAYMENT_ISSUE_DATE);
-        Payment.PaymentBuilder paymentBuilder = Payment.builder().id(1).payment_issue_dt(paymentIssueDt).
-               paymentNumber(PAYM_NUM_1).claimQuery(claimQuery);
-        if(hasPayment) {
-            paymentBuilder.amount(PAYMENT_AMOUNT);
-        }
-        Payment payment = paymentBuilder.build();
-        paymentRepo.save(payment);
 
-        if (hasRemittance) {
-            Remittance remittance = Remittance.builder()
+        Remittance remittance = Remittance.builder()
                 .id(1)
                 .claimQuery(claimQuery)
                 .remittanceAdviceId(REMITTANCE_ADVICEID_1)
@@ -151,7 +141,19 @@ public class TestDataUtils {
                 .remittanceAdviceDate(new Date())
                 .remittanceAdviceFileSize(REMITTANCE_ADVICE_FILE_SIZE)
                 .build();
-            remittanceRepo.save(remittance);
+        remittanceRepo.save(remittance);
+
+
+        //populate Payment and Remittance that refer to the claimQuery
+        Date paymentIssueDt = dateFormatter.parse(PAYMENT_ISSUE_DATE);
+        Payment.PaymentBuilder paymentBuilder = Payment.builder().id(1).payment_issue_dt(paymentIssueDt).
+                paymentNumber(PAYM_NUM_1).claimQuery(claimQuery).remittance(remittance);
+        if (hasPayment) {
+            paymentBuilder.amount(PAYMENT_AMOUNT);
         }
+        Payment payment = paymentBuilder.build();
+        paymentRepo.save(payment);
+
+
     }
 }

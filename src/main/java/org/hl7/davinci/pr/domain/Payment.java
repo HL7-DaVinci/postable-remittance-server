@@ -37,4 +37,7 @@ public class Payment extends AuditableEntity {
     @Column(name="payment_issue_dt")
     Date payment_issue_dt;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "remittance_id", referencedColumnName = "id")
+    Remittance remittance;
 }

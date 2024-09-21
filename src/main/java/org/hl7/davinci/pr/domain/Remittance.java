@@ -43,4 +43,7 @@ public class Remittance extends AuditableEntity {
     @Column(name="remittance_advice_file_size")
     Integer remittanceAdviceFileSize;
 
+    @OneToOne(mappedBy = "remittance")
+    Payment payment;
+
 }

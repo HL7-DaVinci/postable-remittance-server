@@ -63,7 +63,7 @@ class SearchControllerIntegrationTest extends ControllerBaseTest {
         .paymentRepo(paymentRepo).remittanceRepo(remittanceRepo).providerRepo(providerRepo).payerRepo(payerRepo)
         .build();
     try {
-      testDataUtils.allDataPopulated(true, true, true, true, true, true, true);
+      testDataUtils.allDataPopulated(true, true, true, true, true, true);
     } catch (ParseException e) {
       throw new RuntimeException(e);
     }

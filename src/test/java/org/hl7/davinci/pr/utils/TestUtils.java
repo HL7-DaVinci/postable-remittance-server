@@ -20,6 +20,8 @@ import org.hl7.davinci.pr.domain.Payment;
 import org.hl7.davinci.pr.domain.Remittance;
 import org.hl7.davinci.pr.domain.SubscriberPatient;
 
+import static org.hl7.davinci.pr.utils.TestDataUtils.REMITTANCE_ADVICEID_1;
+
 @UtilityClass
 public class TestUtils {
 
@@ -93,23 +95,18 @@ public class TestUtils {
                  }""";
   }
 
-  public String getSampleDownloadRemittanceResponse() {
-    return """
+  public String getSampleDownloadRemittanceResponse(String contentType) {
+    return String.format("""
             {
-                   "resourceType": "DocumentReference",
+                   "resourceType": "Binary",
                    "id": "remittance-document-b6445654-586d-42de-98f7-a0e82a070896",
                    "meta": {
-                     "profile": [ "http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument" ]
+                     "profile": [ "http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocumentt" ]
                    },
-                   "status": "current",
-                   "content": [ {
-                     "attachment": {
-                       "contentType": "application/zip",
-                       "data": "sample"
-                     }
-                   } ]
-                 }
-                """;
+                   "contentType" : "application/%s+gzip",
+                   "data" : "sample"
+            }
+       """, contentType);
   }
 
   public String getSampleDownloadRemittanceRequiredOnly(String remittanceAdviceId) {
@@ -299,7 +296,7 @@ public class TestUtils {
                     }
                 },
                 {
-                    "name": "Payment",
+                    "name": "PaymentInfo",
                     "part": [
                         {
                             "name": "PaymentIssueDate",
@@ -355,7 +352,7 @@ public class TestUtils {
                     "valueString": "123456789"
                 },
                 {
-                    "name": "Payment",
+                    "name": "PaymentInfo",
                     "part": [
                         {
                             "name": "PaymentIssueDate",
@@ -386,7 +383,7 @@ public class TestUtils {
       return Payment.builder()
           .payment_issue_dt(TestDataUtils.dateFormatter.parse(TestDataUtils.PAYMENT_ISSUE_DATE))
           .paymentNumber(paymentNumber != null ? paymentNumber : randomAlphanumericString(10))
-          .amount(TestDataUtils.PAYMENT_AMOUNT)
+          .amount(TestDataUtils.PAYMENT_AMOUNT).remittance(getSampleRemittance(REMITTANCE_ADVICEID_1))
           .build();
     } catch (ParseException e) {
       throw new RuntimeException(e);
