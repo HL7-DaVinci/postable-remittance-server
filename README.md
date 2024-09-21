@@ -578,7 +578,7 @@ curl --location 'http://localhost:8080/$searchByPayment' \
             }
         },
         {
-            "name": "Payment",
+            "name": "PaymentInfo",
             "part": [
                 {
                     "name": "PaymentIssueDate",
@@ -657,7 +657,7 @@ curl --location 'http://localhost:8080/$searchByPayment' \
       ]
     },
     {
-      "name": "Payment",
+      "name": "PaymentInfo",
       "part": [
         {
           "name": "PaymentIssueDate",
@@ -938,7 +938,7 @@ curl --location 'http://localhost:8080/$searchByPayment' \
             }
         },
         {
-            "name": "Payment",
+            "name": "PaymentInfo",
             "part": [
                 {
                     "name": "PaymentIssueDate",
@@ -1160,7 +1160,7 @@ curl --location 'http://localhost:8080/$searchByPayment' \
             }
         },
         {
-            "name": "Payment",
+            "name": "PaymentInfo",
             "part": [
                 {
                     "name": "PaymentIssueDate",
@@ -1281,7 +1281,7 @@ curl --location 'http://localhost:8080/$searchByPayment' \
             "valueString": "000909090"
         },
         {
-            "name": "Payment",
+            "name": "PaymentInfo",
             "part": [
                 {
                     "name": "PaymentIssueDate",

@@ -60,13 +60,6 @@ public class DownloadService {
         String applicationType = (remittanceType.equals(ApiConstants.REMITTANCE_ADVICE_TYPE_PDF))?"pdf":"txt";
         binaryResource.setContentType(String.format("application/%s+gzip", applicationType));
 
-//        DocumentReference documentReference = new DocumentReference();
-//        documentReference.setId("remittance-document-" + FhirUtils.generateUniqueResourceID());
-//        documentReference.setMeta(FhirUtils.generateResourceMeta("http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument"));
-//        documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
-//        documentReference.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
-//        documentReference.getText().setDivAsString(String.format("<div>RemittanceAdviceType:%s</div>", remittanceType));
-
         //the order of tuples is:
         //  {@link ClaimQuery}, {@link org.hl7.davinci.pr.domain.Patient}, {@link org.hl7.davinci.pr.domain.Payer}, {@link Payment}, {@link org.hl7.davinci.pr.domain.Remittance}
         Tuple firstTuple = searchResults.get(0);
@@ -92,8 +85,6 @@ public class DownloadService {
                 gzipOutputStream.close();
             }
         }
-
-       // DocumentReference.DocumentReferenceContentComponent content = documentReference.addContent();
         Base64BinaryType base64BinaryType = new Base64BinaryType();
         if (baos != null) {
             byte[] compressedByArray =  baos.toByteArray();
@@ -102,11 +93,6 @@ public class DownloadService {
             base64BinaryType = new Base64BinaryType();
             base64BinaryType.setValueAsString(encodedBase64String);
         }
-
-//        Attachment attachment = new Attachment();
-//        attachment.setContentType(DataConstants.CONTENT_TYPE_ZIP);
-//        attachment.setDataElement(base64BinaryType);
-//        content.setAttachment(attachment);
         binaryResource.setContent(base64BinaryType.getValue());
         return binaryResource;
     }
