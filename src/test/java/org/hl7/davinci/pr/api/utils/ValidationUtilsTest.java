@@ -441,7 +441,7 @@ class ValidationUtilsTest extends BaseTest {
                 "valueString": "123456"
               },
               {
-                "name": "Payment",
+                "name": "PaymentInfo",
                 "part": [
                   {
                     "name": "PaymentIssueDate",
@@ -493,7 +493,7 @@ class ValidationUtilsTest extends BaseTest {
                 "valueString": "123456789"
               },
               {
-                "name": "Payment",
+                "name": "PaymentInfo",
                 "part": [
                   {
                     "name": "NoPaymentIssueDate",
@@ -519,7 +519,7 @@ class ValidationUtilsTest extends BaseTest {
                 "valueString": "123456789"
               },
               {
-                "name": "Payment",
+                "name": "PaymentInfo",
                 "part": [
                   {
                     "name": "PaymentIssueDate",

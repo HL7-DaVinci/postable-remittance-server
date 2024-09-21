@@ -214,6 +214,7 @@ public class ApiUtils {
       if (paymentIterator.hasNext()) {
         payment = paymentIterator.next();
       }
+      Remittance remittance = remittances.iterator().next();
 
       // Claim
       ParametersParameterComponent claimComponent = new ParametersParameterComponent();
@@ -238,6 +239,21 @@ public class ApiUtils {
           .setValue(new StringType(payment.getPaymentNumber()));
       paymentComponent.addPart().setName(ApiConstants.PAYMENT_AMOUNT)
           .setValue(new Money().setValue(payment.getAmount()).setCurrency(ApiConstants.PAYMENT_CURRENCY));
+
+      //add remittance under payment
+      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
+      remittanceComponent.setName(ApiConstants.REMITTANCE);
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
+              .setValue(new StringType(remittance.getRemittanceAdviceId()));
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
+              .setValue(new CodeType(remittance.getRemittanceAdviceType()));
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
+              .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
+              .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
+      // Add the remittance to the outputParameters
+      paymentComponent.addPart(remittanceComponent);
+
 
       // Add payment to the claimComponent
       claimComponent.addPart(paymentComponent);
@@ -265,21 +281,21 @@ public class ApiUtils {
       outputParameters.addParameter(patientComponent);
     }
 
-    // Remittances
-    for (Remittance remittance : remittances) {
-      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
-      remittanceComponent.setName(ApiConstants.REMITTANCE);
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
-          .setValue(new StringType(remittance.getRemittanceAdviceId()));
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
-          .setValue(new CodeType(remittance.getRemittanceAdviceType()));
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
-          .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
-          .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
-      // Add the remittance to the outputParameters
-      outputParameters.addParameter(remittanceComponent);
-    }
+//    // Remittances
+//    for (Remittance remittance : remittances) {
+//      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
+//      remittanceComponent.setName(ApiConstants.REMITTANCE);
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
+//          .setValue(new StringType(remittance.getRemittanceAdviceId()));
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
+//          .setValue(new CodeType(remittance.getRemittanceAdviceType()));
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
+//          .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
+//          .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
+//      // Add the remittance to the outputParameters
+//      outputParameters.addParameter(remittanceComponent);
+//    }
     return outputParameters;
   }
 
@@ -322,7 +338,7 @@ public class ApiUtils {
     }
 
     // Payment parameters with slice of part
-    requestResource.addParameter().setName(ApiConstants.PAYMENT);
+    requestResource.addParameter().setName(ApiConstants.PAYMENT_INFO);
 
     // Date of Service - required
     ValidationUtils.validateDateOfServiceFormat(paymentIssueDateStart);
@@ -332,7 +348,7 @@ public class ApiUtils {
     paymentPeriod.setEndElement(new DateTimeType(paymentIssueDateEnd));
     ValidationUtils.validatePeriod(paymentPeriod);
     // Add to Payment part
-    requestResource.getParameter(ApiConstants.PAYMENT).addPart()
+    requestResource.getParameter(ApiConstants.PAYMENT_INFO).addPart()
         .setName(ApiConstants.PAYMENT_ISSUE_DATE)
         .setValue(paymentPeriod);
 
@@ -344,12 +360,12 @@ public class ApiUtils {
       paymentAmountComponent.addPart().setName(ApiConstants.PAYMENT_AMOUNT_HIGH).setValue(
           new Money().setValue(Float.parseFloat(paymentAmountHigh)).setCurrency(ApiConstants.PAYMENT_CURRENCY));
       // Add to payment part
-      requestResource.getParameter(ApiConstants.PAYMENT).addPart(paymentAmountComponent);
+      requestResource.getParameter(ApiConstants.PAYMENT_INFO).addPart(paymentAmountComponent);
     }
 
     // Payment number - required
     ValidationUtils.validatePaymentNumber(paymentNumber);
-    requestResource.getParameter(ApiConstants.PAYMENT).addPart()
+    requestResource.getParameter(ApiConstants.PAYMENT_INFO).addPart()
         .setName(ApiConstants.PAYMENT_NUMBER)
         .setValue(new StringType(paymentNumber));
 
@@ -395,32 +411,47 @@ public class ApiUtils {
     // Payment
     for (Payment payment : payments) {
       ParametersParameterComponent paymentComponent = new ParametersParameterComponent();
-      paymentComponent.setName(ApiConstants.PAYMENT);
+      paymentComponent.setName(ApiConstants.PAYMENT_INFO);
       paymentComponent.addPart().setName(ApiConstants.PAYMENT_ISSUE_DATE)
           .setValue(FhirUtils.generateDateType(payment.getPayment_issue_dt()));
       paymentComponent.addPart().setName(ApiConstants.PAYMENT_NUMBER)
           .setValue(new StringType(payment.getPaymentNumber()));
       paymentComponent.addPart().setName(ApiConstants.PAYMENT_AMOUNT)
           .setValue(new Money().setValue(payment.getAmount()).setCurrency(ApiConstants.PAYMENT_CURRENCY));
+
+      Remittance remittance = remittances.iterator().next();
+      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
+      remittanceComponent.setName(ApiConstants.REMITTANCE);
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
+              .setValue(new StringType(remittance.getRemittanceAdviceId()));
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
+              .setValue(new CodeType(remittance.getRemittanceAdviceType()));
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
+              .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
+      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
+              .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
+      // Add the remittance to the payment
+      paymentComponent.addPart(remittanceComponent);
+
       // Add payment to the outputParameters
       outputParameters.addParameter(paymentComponent);
     }
 
-    // Remittances
-    for (Remittance remittance : remittances) {
-      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
-      remittanceComponent.setName(ApiConstants.REMITTANCE);
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
-          .setValue(new StringType(remittance.getRemittanceAdviceId()));
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
-          .setValue(new CodeType(remittance.getRemittanceAdviceType()));
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
-          .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
-      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
-          .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
-      // Add the remittance to the outputParameters
-      outputParameters.addParameter(remittanceComponent);
-    }
+//    // Remittances
+//    for (Remittance remittance : remittances) {
+//      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
+//      remittanceComponent.setName(ApiConstants.REMITTANCE);
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
+//          .setValue(new StringType(remittance.getRemittanceAdviceId()));
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
+//          .setValue(new CodeType(remittance.getRemittanceAdviceType()));
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
+//          .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
+//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
+//          .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
+//      // Add the remittance to the outputParameters
+//      outputParameters.addParameter(remittanceComponent);
+//    }
     return outputParameters;
   }
 }

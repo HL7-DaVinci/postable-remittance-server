@@ -5,6 +5,7 @@ import org.hl7.davinci.pr.api.utils.ValidationUtils;
 import org.hl7.davinci.pr.service.DownloadService;
 import org.hl7.davinci.pr.utils.TestDataUtils;
 import org.hl7.davinci.pr.utils.TestUtils;
+import org.hl7.fhir.r4.model.Binary;
 import org.hl7.fhir.r4.model.DocumentReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,11 +31,12 @@ class DownloadControllerTest extends ControllerBaseTest {
     @Test
     void testDownloadRemittance_withAllParams() throws Exception {
         String requestBody = TestUtils.getSampleDownloadRemittanceRequestBody(TestDataUtils.REMITTANCE_ADVICEID_1);
-        String response = TestUtils.getSampleDownloadRemittanceResponse();
+        String response = TestUtils.getSampleDownloadRemittanceResponse("PDF");
+        Binary binaryResource =  (Binary)FhirUtils.parseResource(response);
 
-        DocumentReference documentReference = (DocumentReference) FhirUtils.parseResource(response);
-        String docRefStringResponse = FhirUtils.convertToJSON(documentReference);
-        when(downloadService.downloadDocument(TestDataUtils.REMITTANCE_ADVICEID_1, "PDF")).thenReturn(documentReference);
+        //DocumentReference documentReference = (DocumentReference) FhirUtils.parseResource(response);
+        String docRefStringResponse = FhirUtils.convertToJSON(binaryResource);
+        when(downloadService.downloadDocument(TestDataUtils.REMITTANCE_ADVICEID_1, "PDF")).thenReturn(binaryResource);
 
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.post(DOWNLOAD_REMITTANCE_ENDPOINT)
@@ -50,11 +52,11 @@ class DownloadControllerTest extends ControllerBaseTest {
     @Test
     void testDownloadRemittance_withRequiredParams() throws Exception {
         String requestBody = TestUtils.getSampleDownloadRemittanceRequiredOnly(TestDataUtils.REMITTANCE_ADVICEID_1);
-        String response = TestUtils.getSampleDownloadRemittanceResponse();
+        String response = TestUtils.getSampleDownloadRemittanceResponse("PDF");
 
-        DocumentReference documentReference = (DocumentReference) FhirUtils.parseResource(response);
-        String docRefStringResponse = FhirUtils.convertToJSON(documentReference);
-        when(downloadService.downloadDocument(TestDataUtils.REMITTANCE_ADVICEID_1, null)).thenReturn(documentReference);
+        Binary binaryResource = (Binary) FhirUtils.parseResource(response);
+        String docRefStringResponse = FhirUtils.convertToJSON(binaryResource);
+        when(downloadService.downloadDocument(TestDataUtils.REMITTANCE_ADVICEID_1, null)).thenReturn(binaryResource);
 
         MvcResult result = mockMvc.perform(
                         MockMvcRequestBuilders.post(DOWNLOAD_REMITTANCE_ENDPOINT)

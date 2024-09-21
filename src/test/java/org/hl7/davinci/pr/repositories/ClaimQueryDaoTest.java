@@ -49,7 +49,7 @@ public class ClaimQueryDaoTest extends BaseTest {
    @Test
     public void findCLaimsTest_noPayerName() {
         try {
-            testDataUtils.allDataPopulated(true, true, false, true , true, true, true);
+            testDataUtils.allDataPopulated(true, true, false, true , true, true);
 
             Date startDos = TestDataUtils.dateFormatter.parse("2024-05-05");
             Date endDos = TestDataUtils.dateFormatter.parse("2024-07-05");
@@ -67,7 +67,7 @@ public class ClaimQueryDaoTest extends BaseTest {
     @Test
     public void findClaimsTest_allData() {
         try {
-            testDataUtils.allDataPopulated(true, true, true, true , true, true, true);
+            testDataUtils.allDataPopulated(true, true, true, true , true, true);
 
             Date startDos = TestDataUtils.dateFormatter.parse("2024-05-05");
             Date endDos = TestDataUtils.dateFormatter.parse("2024-07-05");
@@ -116,7 +116,7 @@ public class ClaimQueryDaoTest extends BaseTest {
     @Test
     public void findRemittanceTest_allData() {
         try {
-            testDataUtils.allDataPopulated(true, true, true, true, true, true, true);
+            testDataUtils.allDataPopulated(true, true, true, true, true, true);
 
             Date startDos = TestDataUtils.dateFormatter.parse("2024-05-05");
             Date endDos = TestDataUtils.dateFormatter.parse("2024-07-05");
@@ -163,7 +163,7 @@ public class ClaimQueryDaoTest extends BaseTest {
     @Test
     public void findByPaymentTest_allData() {
         try {
-            testDataUtils.allDataPopulated(false, true, true, true, true, true, true);
+            testDataUtils.allDataPopulated(false, true, true, true, true, true);
 
             Date startDos = TestDataUtils.dateFormatter.parse("2024-05-05");
             Date endDos = TestDataUtils.dateFormatter.parse("2024-07-05");
@@ -214,7 +214,7 @@ public class ClaimQueryDaoTest extends BaseTest {
     @Test
     public void findPatientsTest_allData() {
         try {
-            testDataUtils.allDataPopulated(true, true, true,true , true, true, true);
+            testDataUtils.allDataPopulated(true, true, true,true , true, true);
 
             Date startDos = TestDataUtils.dateFormatter.parse("2024-05-05");
             Date endDos = TestDataUtils.dateFormatter.parse("2024-07-05");

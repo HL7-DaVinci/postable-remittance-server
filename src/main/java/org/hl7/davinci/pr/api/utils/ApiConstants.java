@@ -43,7 +43,6 @@ public class ApiConstants {
   public static final String PATIENT_FIRST_NAME = "PatientFirstName";
   public static final String PATIENT_LAST_NAME = "PatientLastName";
 
-  public static final String PAYMENT = "Payment";
   public static final String PAYMENT_INFO = "PaymentInfo";
   public static final String PAYMENT_DATE = "PaymentDate";
   public static final String PAYMENT_NUMBER = "PaymentNumber";
@@ -177,7 +176,7 @@ public class ApiConstants {
                    }
                },
                {
-                   "name": "Payment",
+                   "name": "PaymentInfo",
                    "part": [
                        {
                            "name": "PaymentIssueDate",

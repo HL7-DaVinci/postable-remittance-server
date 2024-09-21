@@ -14,6 +14,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import jakarta.persistence.Tuple;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.hl7.davinci.pr.api.utils.ApiConstants;
 import org.hl7.davinci.pr.api.utils.ApiUtils;
 import org.hl7.davinci.pr.api.utils.DataConstants;
@@ -26,9 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -42,19 +47,25 @@ public class DownloadService {
     private final static Font normalFont = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL);
     private final static Font grayFont = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL, BaseColor.LIGHT_GRAY);
 
-    public DocumentReference downloadDocument(String remittanceAdviceId, String remittanceType) throws DocumentException, IOException {
+    public Binary downloadDocument(String remittanceAdviceId, String remittanceType) throws DocumentException, IOException {
 
         List<Tuple> searchResults = claimQueryDao.findByRemittance(remittanceAdviceId);
         if (searchResults == null || searchResults.size() == 0) {
             return null;
         }
         remittanceType = (remittanceType == null)? ApiConstants.REMITTANCE_ADVICE_TYPE_PDF:remittanceType;
-        DocumentReference documentReference = new DocumentReference();
-        documentReference.setId("remittance-document-" + FhirUtils.generateUniqueResourceID());
-        documentReference.setMeta(FhirUtils.generateResourceMeta("http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument"));
-        documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
-        documentReference.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
-        documentReference.getText().setDivAsString(String.format("<div>RemittanceAdviceType:%s</div>", remittanceType));
+        Binary binaryResource = new Binary();
+        binaryResource.setId("remittance-document-" + FhirUtils.generateUniqueResourceID());
+        binaryResource.setMeta(FhirUtils.generateResourceMeta("http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument"));
+        String applicationType = (remittanceType.equals(ApiConstants.REMITTANCE_ADVICE_TYPE_PDF))?"pdf":"txt";
+        binaryResource.setContentType(String.format("application/%s+gzip", applicationType));
+
+//        DocumentReference documentReference = new DocumentReference();
+//        documentReference.setId("remittance-document-" + FhirUtils.generateUniqueResourceID());
+//        documentReference.setMeta(FhirUtils.generateResourceMeta("http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceAdviceDocument"));
+//        documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
+//        documentReference.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
+//        documentReference.getText().setDivAsString(String.format("<div>RemittanceAdviceType:%s</div>", remittanceType));
 
         //the order of tuples is:
         //  {@link ClaimQuery}, {@link org.hl7.davinci.pr.domain.Patient}, {@link org.hl7.davinci.pr.domain.Payer}, {@link Payment}, {@link org.hl7.davinci.pr.domain.Remittance}
@@ -64,7 +75,7 @@ public class DownloadService {
         Payment paymentFirst = firstTuple.get(3, Payment.class);
 
         //build pdf by default
-        ByteArrayOutputStream baos = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (remittanceType.equals(ApiConstants.REMITTANCE_ADVICE_TYPE_PDF)) {
             baos = buildPdf(payerFirst, claimQueryFirst, paymentFirst, searchResults);
         } else {
@@ -72,29 +83,32 @@ public class DownloadService {
             //create zip file, convert to Base64 encoded string
             byte[] uncompressedByteArray = writerResult.getBytes(); //uncompressed
             baos = new ByteArrayOutputStream();
-            try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-                ZipEntry out = new ZipEntry("835-sample.txt");
-                zos.putNextEntry(out);
-                zos.write(uncompressedByteArray, 0, uncompressedByteArray.length);
-                zos.closeEntry();
-            }
+            GzipParameters gzipParameters = new GzipParameters();
+            gzipParameters.setFilename("835-sample.txt");
 
+            try ( GzipCompressorOutputStream gzipOutputStream = new GzipCompressorOutputStream(baos, gzipParameters)) {
+                gzipOutputStream.write(uncompressedByteArray, 0, uncompressedByteArray.length);
+                gzipOutputStream.flush();
+                gzipOutputStream.close();
+            }
         }
-        DocumentReference.DocumentReferenceContentComponent content = documentReference.addContent();
+
+       // DocumentReference.DocumentReferenceContentComponent content = documentReference.addContent();
         Base64BinaryType base64BinaryType = new Base64BinaryType();
         if (baos != null) {
-            byte[] compressedByArray = baos.toByteArray();
+            byte[] compressedByArray =  baos.toByteArray();
             String encodedBase64String = Base64.getEncoder().encodeToString(compressedByArray);
             log.debug("------encoded sting: \n" + encodedBase64String);
             base64BinaryType = new Base64BinaryType();
             base64BinaryType.setValueAsString(encodedBase64String);
         }
 
-        Attachment attachment = new Attachment();
-        attachment.setContentType(DataConstants.CONTENT_TYPE_ZIP);
-        attachment.setDataElement(base64BinaryType);
-        content.setAttachment(attachment);
-        return documentReference;
+//        Attachment attachment = new Attachment();
+//        attachment.setContentType(DataConstants.CONTENT_TYPE_ZIP);
+//        attachment.setDataElement(base64BinaryType);
+//        content.setAttachment(attachment);
+        binaryResource.setContent(base64BinaryType.getValue());
+        return binaryResource;
     }
 
     String build835Text(Payment paymentFirst, Payer payerFirst, ClaimQuery claimQueryFirst, List<Tuple> resultTuples) {
@@ -471,11 +485,17 @@ public class DownloadService {
         //create zip file, convert to Base64 encoded string
         byte[] uncompressedByteArray = byteArrayOutputStream.toByteArray(); //uncompressed
         baos = new ByteArrayOutputStream();
-        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-            ZipEntry out = new ZipEntry(DataConstants.PDF_EOB_FILE_NAME);
-            zos.putNextEntry(out);
-            zos.write(uncompressedByteArray, 0, uncompressedByteArray.length);
-            zos.closeEntry();
+        final GzipParameters gzipParameters = new GzipParameters();
+        gzipParameters.setFilename(DataConstants.PDF_EOB_FILE_NAME);
+        try ( GzipCompressorOutputStream gzipOutputStream = new GzipCompressorOutputStream(
+                baos, gzipParameters)) {
+            gzipOutputStream.write(uncompressedByteArray, 0, uncompressedByteArray.length);
+           // ZipEntry out = new ZipEntry(DataConstants.PDF_EOB_FILE_NAME);
+            //zos.putNextEntry(out);
+           // zos.write(uncompressedByteArray, 0, uncompressedByteArray.length);
+           // zos.closeEntry();
+            gzipOutputStream.flush();
+            gzipOutputStream.close();
         }
         return baos;
     }

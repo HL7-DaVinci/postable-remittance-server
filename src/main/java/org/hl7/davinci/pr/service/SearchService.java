@@ -213,7 +213,7 @@ public class SearchService {
     }
 
     // Payment is required and validated in the controller
-    List<ParametersParameterComponent> paymentComponent = requestResource.getParameter(ApiConstants.PAYMENT).getPart();
+    List<ParametersParameterComponent> paymentComponent = requestResource.getParameter(ApiConstants.PAYMENT_INFO).getPart();
 
     for (ParametersParameterComponent payment : paymentComponent) {
       // PaymentAmount is required and validated in the controller

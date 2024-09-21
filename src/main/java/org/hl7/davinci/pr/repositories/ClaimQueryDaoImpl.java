@@ -267,8 +267,8 @@ public class ClaimQueryDaoImpl implements ClaimQueryDao {
         //0 to * -> left joins for payment and remittance
         Join<Object, Object> paymentJoin = root.join(ClaimQuery_.PAYMENT, JoinType.LEFT);
 
-        JoinType remitJoinType = (isOptionalRemittance)?JoinType.LEFT:JoinType.INNER;
-        Join<Object, Object> remittanceJoin = root.join(ClaimQuery_.REMITTANCES, remitJoinType);
+        JoinType remitJoinType = JoinType.LEFT; //(isOptionalRemittance)?JoinType.LEFT:JoinType.INNER;
+        Join<Object, Object> remittanceJoin = paymentJoin.join(Payment_.REMITTANCE, remitJoinType);
 
         selectionMap.put(PAYER_JOIN, payerJoin);
         selectionMap.put(PAYMENT_JOIN, paymentJoin);

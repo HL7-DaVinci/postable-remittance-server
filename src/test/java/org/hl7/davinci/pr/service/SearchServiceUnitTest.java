@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 
 import jakarta.persistence.Tuple;
 import java.util.List;
+import java.util.Optional;
+
 import org.hl7.davinci.pr.api.utils.ApiConstants;
 import org.hl7.davinci.pr.api.utils.ApiUtils;
 import org.hl7.davinci.pr.domain.ClaimQuery;
@@ -219,10 +221,13 @@ class SearchServiceUnitTest {
         actualResult.getParameter(ApiConstants.TIN).getValue().toString());
     assertTrue(expectedResult.getParameter(ApiConstants.PAYER)
         .equalsDeep(actualResult.getParameter(ApiConstants.PAYER)));
-    assertTrue(expectedResult.getParameter(ApiConstants.PAYMENT)
-        .equalsDeep(actualResult.getParameter(ApiConstants.PAYMENT)));
-    assertTrue(expectedResult.getParameter(ApiConstants.REMITTANCE)
-        .equalsDeep(actualResult.getParameter(ApiConstants.REMITTANCE)));
+    assertTrue(expectedResult.getParameter(ApiConstants.PAYMENT_INFO)
+        .equalsDeep(actualResult.getParameter(ApiConstants.PAYMENT_INFO)));
+    List<Parameters.ParametersParameterComponent> paymParts = actualResult.getParameter(ApiConstants.PAYMENT_INFO).getPart();
+    Optional<Parameters.ParametersParameterComponent> remittanceComponent = paymParts.stream().filter(e -> e.getName().equals(ApiConstants.REMITTANCE)).findFirst();
+    List<Parameters.ParametersParameterComponent> actualRemits = remittanceComponent.get().getPart();
+    Optional<Parameters.ParametersParameterComponent> actualRemitId = actualRemits.stream().filter(e->e.getName().equals("RemittanceAdviceIdentifier")).findFirst();
+    assertEquals(payment.getRemittance().getRemittanceAdviceId(), actualRemitId.get().getValue().toString());
   }
 
   @Test

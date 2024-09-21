@@ -42,6 +42,7 @@
     <commons-lang3.version>3.15.0</commons-lang3.version>
     <itextpdf.version>5.5.13.3</itextpdf.version>
     <x12-parser.version>1.15</x12-parser.version>
+    <commons-compress.version>1.27.1</commons-compress.version>
   </properties>
 
   <dependencies>
@@ -144,6 +145,11 @@
       <groupId>com.imsweb</groupId>
       <artifactId>x12-parser</artifactId>
       <version>${x12-parser.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>${commons-compress.version}</version>
     </dependency>
   </dependencies>
 

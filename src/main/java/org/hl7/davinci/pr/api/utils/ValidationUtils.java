@@ -35,7 +35,7 @@ public class ValidationUtils {
   public final String PATIENT_REQUIRED_MESSAGE = "Patient is required.";
   public final String PATIENT_ID_REQUIRED_MESSAGE = "PatientId is required.";
   public final String DATE_OF_BIRTH_REQUIRED_MESSAGE = "Date of Birth is required.";
-  public final String PAYMENT_REQUIRED_MESSAGE = "Payment is required.";
+  public final String PAYMENT_REQUIRED_MESSAGE = "PaymentInfo is required.";
   public final String PAYMENT_ISSUE_DATE_REQUIRED_MESSAGE = "PaymentIssueDate is required.";
   public final String PAYMENT_NUMBER_REQUIRED_MESSAGE = "PaymentNumber is required.";
   public final String REMITTANCE_ADVICE_ID_REQUIRED_MESSAGE = "Remittance Advice Identifier is required.";
@@ -288,8 +288,8 @@ public class ValidationUtils {
       throw new IllegalArgumentException(TIN_REQUIRED_MESSAGE);
     }
     // Validate required PaymentIssueDate and PaymentNumber from Payment
-    if (requestResource.hasParameter(ApiConstants.PAYMENT)) {
-      List<ParametersParameterComponent> paymentParameter = requestResource.getParameter(ApiConstants.PAYMENT)
+    if (requestResource.hasParameter(ApiConstants.PAYMENT_INFO)) {
+      List<ParametersParameterComponent> paymentParameter = requestResource.getParameter(ApiConstants.PAYMENT_INFO)
           .getPart();
       Map<String, Type> paymentObject = new HashMap<>();
       for (ParametersParameterComponent paymentComponent : paymentParameter) {
