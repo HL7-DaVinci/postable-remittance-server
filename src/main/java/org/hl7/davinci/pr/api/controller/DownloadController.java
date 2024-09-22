@@ -60,7 +60,8 @@ public class DownloadController {
     HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
     try {
-      Parameters requestResource = (Parameters) FhirUtils.parseResource(httpEntity.getBody());
+      String body = (httpEntity.getBody() == null)?"":httpEntity.getBody();
+      Parameters requestResource = (Parameters) FhirUtils.parseResource(body);
       ValidationUtils.validateDownloadRemittanceAdviceRequest(requestResource);
 
       String remittanceAdviceId = requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER).getValue().toString();

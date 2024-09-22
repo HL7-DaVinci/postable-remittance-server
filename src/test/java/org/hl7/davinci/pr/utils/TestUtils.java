@@ -76,6 +76,28 @@ public class TestUtils {
                  }""", remittanceAdviceId);
   }
 
+  public String getSampleDownloadRemittanceRequestBody_missingIdValue() {
+    return """
+              {
+                   "resourceType" : "Parameters",
+                   "id" : "ExampleDownloadRemittance",
+                   "meta" : {
+                     "profile" : [
+                       "http://hl7.org/fhir/us/davinci-pr/StructureDefinition/downloadRemittanceParameters"
+                     ]
+                   },
+                   "parameter" : [
+                     {
+                       "name" : "RemittanceAdviceIdentifier"
+                     },
+                     {
+                       "name" : "RemittanceAdviceType",
+                        "valueCode" : "PDF"
+                     }
+                   ]
+                 }""";
+  }
+
   public String getSampleDownloadRemittanceNoRequired() {
     return """
               {

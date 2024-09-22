@@ -23,6 +23,7 @@ public class FhirUtils {
   public static final String RESOURCE_PARSING_EXCEPTION = "FHIR Resource parsing failure: ";
   public static final String RESOURCE_EMPTY_EXCEPTION = "FHIR Resource is empty";
   public static final String DATE_TYPE_FORMAT = "yyyy-MM-dd";
+  public static final String MALFORMED_BODY = "Malformed body";
 
   /**
    * Convert a FHIR resource into JSON.
@@ -49,7 +50,7 @@ public class FhirUtils {
     try {
       return getFhirContext().newJsonParser().parseResource(resourceString);
     } catch (DataFormatException e) {
-      throw new IllegalArgumentException(RESOURCE_PARSING_EXCEPTION + e.getMessage());
+      throw new IllegalArgumentException(RESOURCE_PARSING_EXCEPTION + MALFORMED_BODY);
     }
   }
 

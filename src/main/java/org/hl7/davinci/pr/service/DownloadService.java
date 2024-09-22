@@ -92,8 +92,10 @@ public class DownloadService {
             log.debug("------encoded sting: \n" + encodedBase64String);
             base64BinaryType = new Base64BinaryType();
             base64BinaryType.setValueAsString(encodedBase64String);
+            base64BinaryType.addExtension("http://hl7.org/fhir/us/davinci-pr/StructureDefinition/remittanceIdentifierExt",
+                    new StringType(remittanceAdviceId));
         }
-        binaryResource.setContent(base64BinaryType.getValue());
+        binaryResource.setDataElement(base64BinaryType);
         return binaryResource;
     }
 
