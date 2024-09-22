@@ -100,4 +100,36 @@ class DownloadControllerTest extends ControllerBaseTest {
         String json = result.getResponse().getContentAsString();
         Assertions.assertTrue(json.contains(ValidationUtils.REMITTANCE_ADVICE_ID_REQUIRED_MESSAGE));
     }
+
+    @Test
+    void testDownloadRemittance_emptyPostBody() throws Exception {
+        String downloadRemittanceRequest = "";
+
+        MvcResult result = mockMvc.perform(
+                        MockMvcRequestBuilders.post(DOWNLOAD_REMITTANCE_ENDPOINT)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(downloadRemittanceRequest))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpectAll(
+                        MockMvcResultMatchers.status().isBadRequest() // Expect HTTP 400 (BAD_REQUEST)
+                ).andReturn();
+        String json = result.getResponse().getContentAsString();
+        Assertions.assertTrue(json.contains(FhirUtils.MALFORMED_BODY));
+    }
+
+    @Test
+    void testDownloadRemittance_missingRemitIdValue() throws Exception {
+        String downloadRemittanceRequest = TestUtils.getSampleDownloadRemittanceRequestBody_missingIdValue();
+
+        MvcResult result = mockMvc.perform(
+                        MockMvcRequestBuilders.post(DOWNLOAD_REMITTANCE_ENDPOINT)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(downloadRemittanceRequest))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpectAll(
+                        MockMvcResultMatchers.status().isBadRequest() // Expect HTTP 400 (BAD_REQUEST)
+                ).andReturn();
+        String json = result.getResponse().getContentAsString();
+        Assertions.assertTrue(json.contains(FhirUtils.MALFORMED_BODY));
+    }
 }

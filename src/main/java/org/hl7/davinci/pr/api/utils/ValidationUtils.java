@@ -146,6 +146,12 @@ public class ValidationUtils {
     }
   }
 
+  private static void validateParameter(ParametersParameterComponent parameterComponent) {
+    if(parameterComponent.getName() == null || parameterComponent.getValue() == null ) {
+      throw new IllegalArgumentException(FhirUtils.MALFORMED_BODY);
+    }
+  }
+
   /**
    * Validates the remittance advice type provided.
    *
@@ -172,13 +178,16 @@ public class ValidationUtils {
     }
     // Validate required RemittanceAdviceIdentifier.
     if (requestResource.hasParameter(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)) {
-      validateRemittanceAdviceId(requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER).getValue().toString());
+      Parameters.ParametersParameterComponent param = requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER);
+      validateParameter(param);
+      validateRemittanceAdviceId(param.getValue().toString() );
     } else {
       throw new IllegalArgumentException(REMITTANCE_ADVICE_ID_REQUIRED_MESSAGE);
     }
 
     // Validate RemittanceAdviceType is present and it has the right value
     if (requestResource.hasParameter(ApiConstants.REMITTANCE_ADVICE_TYPE)) {
+      validateParameter(requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_TYPE));
       String remittanceAdviceType =  requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_TYPE).getValue().toString();
       validateRemittanceAdviceType(remittanceAdviceType);
     }
