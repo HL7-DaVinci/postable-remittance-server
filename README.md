@@ -3,6 +3,8 @@
 _The Da Vinci Postable Remittance Reference Implementation Microservice that confirms
 the [Postable Remittance Implementation Guide (IG)](https://build.fhir.org/ig/HL7/davinci-pr/index.html)_
 
+A live demo is hosted by [HL7 FHIR Foundry](https://foundry.hl7.org/products/db125eeb-eeae-4467-9012-cbce6b13c045), where you may also download curated configurations to run yourself.
+
 ---
 
 ## Table of Contents
