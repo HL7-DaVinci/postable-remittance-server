@@ -202,19 +202,25 @@ public class ApiUtils {
       outputParameters.addParameter(payerComponent);
     }
 
-    // Claim and Payment will be together
+    // Claim and Payment and Remittance will be together
     Iterator<ClaimQuery> claimQueryIterator = claimQueries.iterator();
     Iterator<Payment> paymentIterator = payments.iterator();
+    Iterator<Remittance> remittanceIterator = remittances.iterator();
+    // at least 1 remittance and payment is guaranteed by dao
+    Remittance remittance = null;
     Payment payment = null;
     String subscriberPatientId = null;
     while (claimQueryIterator.hasNext()) {
       ClaimQuery claimQuery = claimQueryIterator.next();
 
-      // If there are multiple claims but only one payment, the payment will be added to all claims
+      // If there are multiple claims but only one payment and remittance, they will be added to all claims
+      // And if there are multiple payments and remittances, then they will be added individually to each claim
       if (paymentIterator.hasNext()) {
         payment = paymentIterator.next();
       }
-      Remittance remittance = remittances.iterator().next();
+      if (remittanceIterator.hasNext()) {
+        remittance = remittanceIterator.next();
+      }
 
       // Claim
       ParametersParameterComponent claimComponent = new ParametersParameterComponent();
@@ -230,7 +236,7 @@ public class ApiUtils {
 
       subscriberPatientId = claimQuery.getSubscriberPatientId();
 
-      // Payment
+      // Payment nested in claim
       ParametersParameterComponent paymentComponent = new ParametersParameterComponent();
       paymentComponent.setName(ApiConstants.PAYMENT_INFO);
       paymentComponent.addPart().setName(ApiConstants.PAYMENT_DATE)
@@ -240,7 +246,7 @@ public class ApiUtils {
       paymentComponent.addPart().setName(ApiConstants.PAYMENT_AMOUNT)
           .setValue(new Money().setValue(payment.getAmount()).setCurrency(ApiConstants.PAYMENT_CURRENCY));
 
-      //add remittance under payment
+      // Remittance nested in payment
       ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
       remittanceComponent.setName(ApiConstants.REMITTANCE);
       remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
@@ -251,7 +257,7 @@ public class ApiUtils {
               .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
       remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
               .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
-      // Add the remittance to the outputParameters
+      // Add remittance to the paymentComponent
       paymentComponent.addPart(remittanceComponent);
 
 
@@ -281,21 +287,6 @@ public class ApiUtils {
       outputParameters.addParameter(patientComponent);
     }
 
-//    // Remittances
-//    for (Remittance remittance : remittances) {
-//      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
-//      remittanceComponent.setName(ApiConstants.REMITTANCE);
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
-//          .setValue(new StringType(remittance.getRemittanceAdviceId()));
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
-//          .setValue(new CodeType(remittance.getRemittanceAdviceType()));
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
-//          .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
-//          .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
-//      // Add the remittance to the outputParameters
-//      outputParameters.addParameter(remittanceComponent);
-//    }
     return outputParameters;
   }
 
@@ -408,6 +399,9 @@ public class ApiUtils {
       outputParameters.addParameter(payerComponent);
     }
 
+    Iterator<Remittance> remittanceIterator = remittances.iterator();
+    Remittance remittance = null;
+
     // Payment
     for (Payment payment : payments) {
       ParametersParameterComponent paymentComponent = new ParametersParameterComponent();
@@ -419,7 +413,12 @@ public class ApiUtils {
       paymentComponent.addPart().setName(ApiConstants.PAYMENT_AMOUNT)
           .setValue(new Money().setValue(payment.getAmount()).setCurrency(ApiConstants.PAYMENT_CURRENCY));
 
-      Remittance remittance = remittances.iterator().next();
+      // If there are multiple payments but only one remittance, it will be added to all payments
+      // And if there are multiple remittances, then they will be added individually to each payment
+      if (remittanceIterator.hasNext()) {
+        remittance = remittanceIterator.next();
+      }
+
       ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
       remittanceComponent.setName(ApiConstants.REMITTANCE);
       remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
@@ -437,21 +436,6 @@ public class ApiUtils {
       outputParameters.addParameter(paymentComponent);
     }
 
-//    // Remittances
-//    for (Remittance remittance : remittances) {
-//      ParametersParameterComponent remittanceComponent = new ParametersParameterComponent();
-//      remittanceComponent.setName(ApiConstants.REMITTANCE);
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)
-//          .setValue(new StringType(remittance.getRemittanceAdviceId()));
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_TYPE)
-//          .setValue(new CodeType(remittance.getRemittanceAdviceType()));
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_DATE)
-//          .setValue(FhirUtils.generateDateType(remittance.getRemittanceAdviceDate()));
-//      remittanceComponent.addPart().setName(ApiConstants.REMITTANCE_ADVICE_FILE_SIZE)
-//          .setValue(new IntegerType(remittance.getRemittanceAdviceFileSize()));
-//      // Add the remittance to the outputParameters
-//      outputParameters.addParameter(remittanceComponent);
-//    }
     return outputParameters;
   }
 }

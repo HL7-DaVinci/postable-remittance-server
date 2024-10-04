@@ -444,6 +444,27 @@ curl --location 'http://localhost:8080/$searchByPatient' \
                 "value": 20.0,
                 "currency": "USD"
               }
+            },
+            {
+              "name": "Remittance",
+              "part": [
+                {
+                  "name": "RemittanceAdviceIdentifier",
+                  "valueString": "A123456BCD"
+                },
+                {
+                  "name": "RemittanceAdviceType",
+                  "valueCode": "835"
+                },
+                {
+                  "name": "RemittanceAdviceDate",
+                  "valueDate": "2023-10-02"
+                },
+                {
+                  "name": "RemittanceAdviceFileSize",
+                  "valueInteger": 1024
+                }
+              ]
             }
           ]
         }
@@ -485,6 +506,27 @@ curl --location 'http://localhost:8080/$searchByPatient' \
                 "value": 50.0,
                 "currency": "USD"
               }
+            },
+            {
+              "name": "Remittance",
+              "part": [
+                {
+                  "name": "RemittanceAdviceIdentifier",
+                  "valueString": "A123456BCDEF"
+                },
+                {
+                  "name": "RemittanceAdviceType",
+                  "valueCode": "835"
+                },
+                {
+                  "name": "RemittanceAdviceDate",
+                  "valueDate": "2023-11-02"
+                },
+                {
+                  "name": "RemittanceAdviceFileSize",
+                  "valueInteger": 1536
+                }
+              ]
             }
           ]
         }
@@ -508,48 +550,6 @@ curl --location 'http://localhost:8080/$searchByPatient' \
         {
           "name": "PatientLastName",
           "valueString": "ZXCVB"
-        }
-      ]
-    },
-    {
-      "name": "Remittance",
-      "part": [
-        {
-          "name": "RemittanceAdviceIdentifier",
-          "valueString": "A123456BCD"
-        },
-        {
-          "name": "RemittanceAdviceType",
-          "valueCode": "835"
-        },
-        {
-          "name": "RemittanceAdviceDate",
-          "valueDate": "2023-10-02"
-        },
-        {
-          "name": "RemittanceAdviceFileSize",
-          "valueInteger": 1024
-        }
-      ]
-    },
-    {
-      "name": "Remittance",
-      "part": [
-        {
-          "name": "RemittanceAdviceIdentifier",
-          "valueString": "A123456BCDEF"
-        },
-        {
-          "name": "RemittanceAdviceType",
-          "valueCode": "835"
-        },
-        {
-          "name": "RemittanceAdviceDate",
-          "valueDate": "2023-11-02"
-        },
-        {
-          "name": "RemittanceAdviceFileSize",
-          "valueInteger": 1536
         }
       ]
     }

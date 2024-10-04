@@ -178,7 +178,7 @@ public class ValidationUtils {
     }
     // Validate required RemittanceAdviceIdentifier.
     if (requestResource.hasParameter(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER)) {
-      Parameters.ParametersParameterComponent param = requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER);
+      ParametersParameterComponent param = requestResource.getParameter(ApiConstants.REMITTANCE_ADVICE_IDENTIFIER);
       validateParameter(param);
       validateRemittanceAdviceId(param.getValue().toString() );
     } else {
