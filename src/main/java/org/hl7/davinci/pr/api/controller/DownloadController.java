@@ -13,7 +13,6 @@ import org.hl7.davinci.pr.api.utils.FhirUtils;
 import org.hl7.davinci.pr.api.utils.ValidationUtils;
 import org.hl7.davinci.pr.service.DownloadService;
 import org.hl7.fhir.r4.model.Binary;
-import org.hl7.fhir.r4.model.DocumentReference;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.hl7.fhir.r4.model.OperationOutcome.IssueSeverity;
 import org.hl7.fhir.r4.model.OperationOutcome.IssueType;
@@ -52,7 +51,7 @@ public class DownloadController {
   )
   @PostMapping(
       path = DOWNLOAD_REMITTANCE_ENDPOINT,
-      consumes = {MediaType.APPLICATION_JSON_VALUE})
+      consumes = {MediaType.APPLICATION_JSON_VALUE, ApiConstants.CONTENT_TYPE_APPLICATION_FHIR_JSON})
   public ResponseEntity<String> downloadRemittance(
       @RequestBody(required = true, content = @Content(schema = @Schema(example = DOWNLOAD_REMITTANCE_EXAMPLE))) HttpEntity<String> httpEntity) {
 

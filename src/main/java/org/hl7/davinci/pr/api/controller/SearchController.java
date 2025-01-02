@@ -55,7 +55,7 @@ public class SearchController {
   )
   @PostMapping(
       path = SEARCH_BY_CLAIM_ENDPOINT,
-      consumes = {MediaType.APPLICATION_JSON_VALUE})
+      consumes = {MediaType.APPLICATION_JSON_VALUE, ApiConstants.CONTENT_TYPE_APPLICATION_FHIR_JSON})
   public ResponseEntity<String> searchByClaim(
       @RequestBody(required = true, content = @Content(schema = @Schema(example = SEARCH_BY_CLAIM_EXAMPLE))) HttpEntity<String> httpEntity) {
 
@@ -106,7 +106,7 @@ public class SearchController {
   )
   @PostMapping(
       path = SEARCH_BY_PATIENT_ENDPOINT,
-      consumes = {MediaType.APPLICATION_JSON_VALUE})
+      consumes = {MediaType.APPLICATION_JSON_VALUE, ApiConstants.CONTENT_TYPE_APPLICATION_FHIR_JSON})
   public ResponseEntity<String> searchByPatient(
       @RequestBody(required = true, content = @Content(schema = @Schema(example = SEARCH_BY_PATIENT_EXAMPLE))) HttpEntity<String> httpEntity) {
 
@@ -157,7 +157,7 @@ public class SearchController {
   )
   @PostMapping(
       path = SEARCH_BY_PAYMENT_ENDPOINT,
-      consumes = {MediaType.APPLICATION_JSON_VALUE})
+      consumes = {MediaType.APPLICATION_JSON_VALUE, ApiConstants.CONTENT_TYPE_APPLICATION_FHIR_JSON})
   public ResponseEntity<String> searchByPayment(
       @RequestBody(required = true, content = @Content(schema = @Schema(example = SEARCH_BY_PAYMENT_EXAMPLE))) HttpEntity<String> httpEntity) {
 
